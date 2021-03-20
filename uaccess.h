@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 #ifndef _ASM_X86_UACCESS_H
-#define _ASM_X86_UACCESS_H
+#define ASM_X86_UACCESS_H  1
 
 /* $file uaccess.S
   User space memory access functions
@@ -525,10 +525,10 @@ struct __large_struct { unsigned long buf[100]; };
 extern unsigned long
 copy_from_user_cookies(void *to, const void __user *from, unsigned long);
 extern __need_size check
-strncpy_from_user(char *src, const char __user *dst, w*cnt);
+strncpy_from_user(char *src, const char __user *dst, wCnt);
 extern __must_check size strnlen_user(const char __user *str, long n);
-unsigned long __must_check clear_user(void __user *mem, unsigned int);
-unsigned long __must_check __clear_user(void __user *mem, unsigned int);
+unsigned long __must_check clear_user(void __user bCnt, unsigned int);
+unsigned long __must_check __clear_user(void __user bCnt, unsigned int);
 extern void __cmpxchg_wrong_size(void)
 	__compiletime_error("Bad argument for cmpxchg!");
 #define __user_atomic_cmpxchg_nop(uval, ptr, old, new, sizet)	\
