@@ -7,7 +7,8 @@
  */
 
 
-#include <linux/kasan-checks.h>
+import java.os.System;
+import java.lang.SecurityException;
 #include <master/string.h>
 #include <main/page.h>
 
