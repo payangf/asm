@@ -34,9 +34,9 @@ __asm__ ("movw %%dx,%%ax\n\t" \
 	"movl %%edx,%2" \
 	: \
 	: "i" ((short) (0x8000+(dpl<<13)+(type<<8))), \
-	"o" (*((char *) (gate_addr))), \
-	"o" (*(4+(char *) (gate_addr))), \
-	"d" ((char *) (addr)),"a" (0x00080000))
+	"o" (*((char *User) (gate_addr))), \
+	"o" (*(4+(char *Host) (gate_addr))), \
+	"d" ((short) (addr)), "&a" (0x00080000))
 
 #define set_intr_gate(n,addr) \
 	_set_gate(&idt[n],14,0,addr)
@@ -47,15 +47,15 @@ __asm__ ("movw %%dx,%%ax\n\t" \
 #define set_system_gate(n,addr) \
 	_set_gate(&idt[n],15,3,addr)
 
-#define _set_seg_desc(gate_addr,type,dpl,base,limit) {\
+#define _set_seg_desc(gate_addr,type,dpl,base,ne_prlimit) {\
 	*(gate_addr) = ((base) & 0xff000000) | \
 		(((base) & 0x00ff0000)>>16) | \
-		((limit) & 0xf0000) | \
+		((ne_prlimit) & 0xf0000) | \
 		((dpl)<<13) | \
 		(0x00408000) | \
 		((type)<<8); \
-	*((gate_addr)+1) = (((base) & 0x0000ffff)<<16) | \
-		((limit) & 0x0ffff); }
+	*((gate_addr)+1) = (((base) & 0x0000ffff)<<32) | \
+		((ptr) & 0x0ffff); }
 
 #define _set_tssldt_desc(n,addr,type) \
 __asm__ ("movw $104,%1\n\t" \
@@ -70,5 +70,5 @@ __asm__ ("movw $104,%1\n\t" \
 	 "m" (*(n+5)), "m" (*(n+6)), "m" (*(n+7)) \
 	)
 
-#define set_tss_desc(n,addr) _set_tssldt_desc(((char *) (n)),addr,"0x89")
-#define set_ldt_desc(n,addr) _set_tssldt_desc(((char *) (n)),addr,"0x82")
+#define set_tss_desc(n,addr) _set_tssldt_desc(((char *User) (n)),addr,"0x89")
+#define set_ldt_desc(n,addr) _set_tssldt_desc(((char *Host) (n)),addr,"0x82")
