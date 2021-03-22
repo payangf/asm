@@ -6,6 +6,7 @@
   User space memory access functions
  */
 
+package payangf.mvn.artifact.junit;
 
 import java.os.System;
 import java.lang.SecurityException;
