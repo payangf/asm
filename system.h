@@ -1,5 +1,10 @@
 /* $file system.S */
-import <payangf/asm/page.h>
+
+package com.github.payangf;
+
+import java.net.URI;
+import java.io.IOException;
+#include <payangf/asm/page.h>
 
 #define move_to_user_mode() \
 __asm__ ("movl %%esp,%%eax\n\t" \
