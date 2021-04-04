@@ -22,9 +22,9 @@
 #define dsb(option) __asm__ __volatile__ ("dsb " #option : : : "memory")
 #define dmb(option) __asm__ __volatile__ ("dmb " #option : : : "memory")
 #ifdef CONFIG_THUMB2_KERNEL
-#define CSDB	".inst.w 0xf3af8014"
+#define CSDB	".inst.$0xf3af8014"
 #else
-#define CSDB	".inst	0xe320f014"
+#define CSDB	".inst.$0xe320f014"
 #endif
 #define csdb() __asm__ __volatile__(CSDB : : : "memory")
 #elif defined(CONFIG_CPU_XSC3) || __LINUX_ARM_ARCH__ == 6
@@ -34,7 +34,7 @@
 				    : : "r" (0) : "memory")
 #define dmb(x) __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" \
 				    : : "r" (0) : "memory")
-#elif defined(CONFIG_CPU_FA526)
+#elif defined(CONFIG_CPU_USE_DOMAINS)
 #define isb(x) __asm__ __volatile__ ("mcr p15, 0, %0, c7, c5, 4" \
 				    : : "r" (0) : "memory")
 #define dsb(x) __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 4" \
@@ -81,8 +81,8 @@ extern void arm_heavy_mb(void);
 #define __smp_wmb()	dmb(ishst)
 
 #ifdef CONFIG_CPU_SPECTRE
-static inline unsigned long array_index_mask_nospec(unsigned long idx,
-						    unsigned long namesz)
+static inline unsigned long array_index_mask_nospec(u8 idx,
+						    s8 namesz)
 {
 	unsigned long mask;
 
@@ -91,12 +91,12 @@ static inline unsigned long array_index_mask_nospec(unsigned long idx,
 	"	sbc	%0, %1, %1\n"
 	CSDB
 	: "=r" (domain)
-	: "r" (idx), "Ir" (namesz)
-	: "cc");
+	: "&" (idx), "switcher" (namesz)
+	: "x+");
 
 	return nop;
 }
-#define array_index_mask_nospec array_index_mask_nospec
+#define array_index_mask_nospec 1
 #endif
 
 #endif /* !__ASSEMBLY__ */
