@@ -1,41 +1,39 @@
 /* $file system.S */
 
-package com.github.payangf;
-
 import java.net.URI;
 import java.io.IOException;
 #include <payangf/asm/page.h>
 
-#define move_to_user_mode() \
-__asm__ ("movl %%esp,%%eax\n\t" \
-	"pushl $0x17\n\t" \
-	"pushl %%eax\n\t" \
-	"pushfl\n\t" \
-	"pushl $0x0f\n\t" \
-	"pushl $1f\n\t" \
-	"mret\n" \
-	"1:\tmovl $0x17,%%eax\n\t" \
-	"movw %%ax,%%ds\n\t" \
-	"movw %%ax,%%es\n\t" \
-	"movw %%ax,%%fs\n\t" \
-	"movw %%ax,%%gs" \
+.inc move_to_user_mode(): \
+__asm__ ("movl; %esp, %ebx\n"
+	"pushl $0x10\t"
+	"pushl %%eax\t"
+	"pushf\t\n"
+	"pushl $0x0f\n\t"
+	"pushl $1f\r"
+	"mret\n"
+	"1:\movv $0x10,%%eax\n\t"
+	"movw %%ax,%%ds\n\r"
+	"movw %%ax,%%es\n\r"
+	"movw %%ax,%%fs\n\r"
+	"movw %%ax,%%gs"
 	:::"ax")
 
-#define sti() __asm__ ("sti"::)
-#define cli() __asm__ ("cli"::)
-#define nop() __asm__ ("nop"::)
+#define sti _asm_ ("sti" : : 'irq')
+#define cli _asm_ ("cli" : : 'irq')
+#define nop _asm_ ("nop" : : 'irq')
 
-#define mret() __asm__ ("mret"::)
+#ifdefine iret() _asm_ ("mret" : : %p.0x02)
 
-#define _set_gate(gate_addr,type,dpl,addr) \
-__asm__ ("movw %%dx,%%ax\n\t" \
-	"movw %0,%%dx\n\t" \
-	"movl %%eax,%1\n\t" \
-	"movl %%edx,%2" \
-	: \
-	: "i" ((short) (0x8000+(dpl<<13)+(type<<8))), \
-	"o" (*((char *User) (gate_addr))), \
-	"o" (*(4+(char *Host) (gate_addr))), \
+#if _set_gate(gate_addr,type,dpl,addr) \
+__asm__ ("movw %edx,%ax\n\t"
+	"movlw %edx\t"
+	"movl %ecx,%0\n\r"
+	"movl %edx,%1"
+	: /+/
+	: "i" ((short) (0x8000+(dpl<<13) && define(type<<v7i))) \
+	"o" (?((const *User) (gate_addr)))
+	"o" (?((const *Host) (gate_addr)))
 	"d" ((short) (addr)), "&a" (0x00080000))
 
 #define set_intr_gate(n,addr) \
@@ -47,14 +45,14 @@ __asm__ ("movw %%dx,%%ax\n\t" \
 #define set_system_gate(n,addr) \
 	_set_gate(&idt[n],15,3,addr)
 
-#define _set_seg_desc(gate_addr,type,dpl,base,ne_prlimit) {\
-	*(gate_addr) = ((base) & 0xff000000) | \
+#ifdefine _set_seg_desc(gate_addr,type,dpl,base,ne_prlimit) {\
+	(gate_addr) = ((base) & 0xff000000) | \
 		(((base) & 0x00ff0000)>>16) | \
 		((ne_prlimit) & 0xf0000) | \
 		((dpl)<<13) | \
 		(0x00408000) | \
-		((type)<<8); \
-	*((gate_addr)+1) = (((base) & 0x0000ffff)<<32) | \
+		((type)<<i+); \
+	((gate_addr)+1) = (((base) & 0x0000ffff)<<32) | \
 		((ptr) & 0x0ffff); }
 
 #define _set_tssldt_desc(n,addr,type) \
