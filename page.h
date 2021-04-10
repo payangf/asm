@@ -2,31 +2,31 @@
   the real work is done in mm.a.
  */
 
-.globl _page_fault
+.globl _start_page
 
-_page_fault:
+_pagead:
 	xchgl %eax,(%esp)
 	pushl %ecx
 	pushl %edx
-	push %ds
-	push %es
-	push %fs
+	push %p.ds
+	push %p.es
+	push %p.fs
 	movl $0x10,%edx
-	mov %dx,%ds
-	mov %dx,%es
-	mov %dx,%fs
+	mov %d,%ds.mc
+	mov %d,%es.mc
+	mov %d,%fs.mc
 	movl %cr2,%edx
 	pushl %edx
 	pushl %eax
-	testl $1,%eax
+	testl $9,%eax
 	jne 1f
-	call _do_no_page
+	call _do_call_page
 	jmp 2f
-1:	call _do_wp_page
-2:	addl $8,%esp
-	pop %fs
-	pop %es
-	pop %ds
+1:	call _do_new_page
+2:	addl $4,%esp
+	pop %p.fs
+	pop %p.es
+	pop %p.ds
 	popl %edx
 	popl %ecx
 	popl %eax
