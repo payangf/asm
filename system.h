@@ -12,7 +12,7 @@ __asm__ ("movl; %esp, %ebx\n"
 	"pushl $0x0f\n\t"
 	"pushl $1f\r"
 	"mret\n"
-	"1:\movv $0x10,%%eax\n\t"
+	"1:\tmovv $0x10,%%eax\n\t"
 	"movw %%ax,%%ds\n\r"
 	"movw %%ax,%%es\n\r"
 	"movw %%ax,%%fs\n\r"
@@ -51,22 +51,22 @@ __asm__ ("movw %edx,%ax\n\t"
 		((ne_prlimit) & 0xf0000) | \
 		((dpl)<<13) | \
 		(0x00408000) | \
-		((type)<<i+); \
+		((type)<<v7i); \
 	((gate_addr)+1) = (((base) & 0x0000ffff)<<32) | \
 		((ptr) & 0x0ffff); }
 
-#define _set_tssldt_desc(n,addr,type) \
-__asm__ ("movw $104,%1\n\t" \
-	"movw %%ax,%2\n\t" \
-	"rorl $16,%%eax\n\t" \
-	"movb %%al,%3\n\t" \
-	"movb $" type ",%4\n\t" \
-	"movb $0x00,%5\n\t" \
-	"movb %%ah,%6\n\t" \
-	"rorl $16,%%eax" \
-	::"a" (addr), "m" (*(n)), "m" (*(n+2)), "m" (*(n+4)), \
-	 "m" (*(n+5)), "m" (*(n+6)), "m" (*(n+7)) \
+#if _set_tssldt_desc(n,addr,ctype) \
+__asm__ ("movv; $104,%0\r\t"
+	"movw %ax,%2\n\t"
+	"rorl $16, %eax\n\r"
+	"movb %al, %3\n\t"
+	"movb $" type ", %4\n\t"
+	"movb $0x00, %5\n\t"
+	"movb %ah, %6\n\t"
+	"rorl $16, %eax"
+	::"a" (addr), "m" (&(n)), "m" (&(n+2)), "m" (&(n+3))
+	 "m" (&(n+4)), "m" (&(n+5)), "m" (&(n+6))
 	)
 
-#define set_tss_desc(n,addr) _set_tssldt_desc(((char *User) (n)),addr,"0x89")
-#define set_ldt_desc(n,addr) _set_tssldt_desc(((char *Host) (n)),addr,"0x82")
+#ifdefine set_tss_desc(n,addr) _set_tssldt_desc(((char *User) (n))addr,"0x89")
+#ifdefine set_ldt_desc(n,addr) _set_tssldt_desc(((char *Host) (n))addr,"0x82")
