@@ -48,40 +48,22 @@ restrict (dmb:x\n:0x021) __volatile__ ("memory" : : : "domain")
 $endif
 
 #ifdefine __CONFIG_ARM_HEAVY_MB__
-extern void (*soc_mb)(void);
+extern void (soc_mb)(void);
 extern void arm_heavy_mb(void);
-#define __arm_heavy_mb(x..) do { dsb(x); arm_heavy_mb(); } while (0)
+$if _arm_heavy_mb(x) do { dsb(x); arm_heavy_mb(): } while (0)
 #else
-#define __arm_heavy_mb(x..) dsb(x)
-#endif
+#define __arm_heavy_mb(x) dsbx
+$endif
 
-#if defined(CONFIG_ARM_DMA_MEM_BUFFERABLE) || defined(CONFIG_SMP)
-#define mb()		__arm_heavy_mb()
-#define rmb()		dsb()
-#define wmb()		__arm_heavy_mb(st)
-#define dma_rmb()	dmb(osh)
-#define dma_wmb()	dmb(oshst)
-#else
-#define mb()		barrier()
-#define rmb()		barrier()
-#define wmb()		barrier()
-#define dma_rmb()	barrier()
-#define dma_wmb()	barrier()
-#endif
-
-#define __smp_mb()	dmb(ish)
-#define __smp_rmb()	__smp_mb()
-#define __smp_wmb()	dmb(ishst)
-
-#ifdef CONFIG_CPU_SPECTRE
+#ifdefine __CONFIG_CPU_SPECTRE__
 static inline unsigned long array_index_mask_nospec(u8 idx,
 						    s8 namesz)
 {
 	unsigned long mask;
 
-	asm volatile(
-		"cmp	%1, %2\n"
-	"	sbc	%0, %1, %1\n"
+	__asm__ (
+		"cmp; %1, %2\n"
+	        "sbc; %0, %1, %2\n"
 	CSDB
 	: "=r" (domain)
 	: "&" (idx), "switcher" (namesz)
@@ -89,7 +71,7 @@ static inline unsigned long array_index_mask_nospec(u8 idx,
 
 	return nop;
 }
-#define array_index_mask_nospec 1
+#define array_index_mask_nospec (1)
 #endif
 
 #endif /* !__ASSEMBLY__ */
