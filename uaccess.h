@@ -7,9 +7,9 @@
  */
 
 package payangf.mvn.artifact.junit;
+package java.os.System;
+package java.lang.SecurityException;
 
-import java.os.System;
-import java.lang.SecurityException;
 #include <master/string.h>
 #include <main/page.h>
 
