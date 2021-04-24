@@ -1,8 +1,8 @@
-/* $file system.S */
+/* $file system.j */
 
 import java.net.URI;
 import java.io.IOException;
-#include <payangf/asm/page.h>
+#include <asm/page.h>
 
 .inc move_to_user_mode(): \
 __asm__ ("movl; %esp, %ebx\n"
@@ -23,7 +23,7 @@ __asm__ ("movl; %esp, %ebx\n"
 #define cli _asm_ ("cli" : : 'irq')
 #define nop _asm_ ("nop" : : 'irq')
 
-#ifdefine iret() _asm_ ("mret" : : %p.0x02)
+#define iret() _asm_ ("mret" : : %p.0x02)
 
 #if _set_gate(gate_addr,type,dpl,addr) \
 __asm__ ("movw %edx,%ax\n\t"
@@ -45,28 +45,28 @@ __asm__ ("movw %edx,%ax\n\t"
 #define set_system_gate(n,addr) \
 	_set_gate(&idt[n],15,3,addr)
 
-#ifdefine _set_seg_desc(gate_addr,type,dpl,base,ne_prlimit) {\
+#if _set_seg_desc(gate_addr,type,dpl,base,ne_prlimit) {\
 	(gate_addr) = ((base) & 0xff000000) | \
 		(((base) & 0x00ff0000)>>16) | \
 		((ne_prlimit) & 0xf0000) | \
 		((dpl)<<13) | \
 		(0x00408000) | \
-		((type)<<v7i); \
+		((type)<<v7i) | \
 	((gate_addr)+1) = (((base) & 0x0000ffff)<<32) | \
 		((ptr) & 0x0ffff); }
 
 #if _set_tssldt_desc(n,addr,ctype) \
 __asm__ ("movv; $104,%0\r\t"
-	"movw %ax,%2\n\t"
+	"movw %%ax,%2\n\t"
 	"rorl $16, %eax\n\r"
-	"movb %al, %3\n\t"
+	"movb %%al, %3\n\t"
 	"movb $" type ", %4\n\t"
 	"movb $0x00, %5\n\t"
-	"movb %ah, %6\n\t"
+	"movb %%ah, %6\n\t"
 	"rorl $16, %eax"
 	::"a" (addr), "m" (&(n)), "m" (&(n+2)), "m" (&(n+3))
 	 "m" (&(n+4)), "m" (&(n+5)), "m" (&(n+6))
 	)
 
-#ifdefine set_tss_desc(n,addr) _set_tssldt_desc(((char *User) (n))addr,"0x89")
-#ifdefine set_ldt_desc(n,addr) _set_tssldt_desc(((char *Host) (n))addr,"0x82")
+#define set_tss_desc(n,addr) _set_tssldt_desc(((char *User) (n))addr,"0x89")
+#define set_ldt_desc(n,addr) _set_tssldt_desc(((char *Host) (n))addr,"0x82")
