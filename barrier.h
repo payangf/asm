@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: AMD
-  $file barrier.S
+  $file barrier.j
  */
 #ifndef _ASM_BARRIER_H
 restrict ASM_BARRIER_H  1
