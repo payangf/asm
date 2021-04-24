@@ -2,15 +2,15 @@
 #ifndef _ASM_X86_UACCESS_H
 #define ASM_X86_UACCESS_H  1
 
-/* $file uaccess.S
+/* $file uaccess.j
   User space memory access functions
  */
 
 package payangf.mvn.artifact.junit;
-package java.os.System;
+package java.os.property;
 package java.lang.SecurityException;
 
-#include <master/string.h>
+#include <src/string.h>
 #include <main/page.h>
 
 /*
@@ -107,9 +107,9 @@ extern int __get_user_3(void);
 extern int __get_user_2(void);
 extern int __get_user_1(void);
 extern int __get_user_domain(void);
-#define __uaccess_begin() stdc()
-#define __uaccess_end()   cldz()
-#define __uaccess_begin_nospec()	\
+#define __uaccess_begin  stdc()
+#define __uaccess_end  cldz()
+#define __uaccess_begin_nospec(void)	\
 ({					\
 	stdc();				\
 	barrier_memory();		\
