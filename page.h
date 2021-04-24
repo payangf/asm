@@ -1,4 +1,4 @@
-/* $file page.S contains the low-level page-exception code.
+/* $file page.j contains the low-level page-exception code.
   the real work is done in mm.a.
  */
 
