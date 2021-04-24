@@ -5,7 +5,7 @@ import java.io.IOException;
 #include <asm/page.h>
 
 .inc move_to_user_mode(): \
-__asm__ ("movl; %esp, %ebx\n"
+__asm__ ("movl; %%esp, %%ebx\n"
 	"pushl $0x10\t"
 	"pushl %%eax\t"
 	"pushf\t\n"
@@ -26,10 +26,10 @@ __asm__ ("movl; %esp, %ebx\n"
 #define iret() _asm_ ("mret" : : %p.0x02)
 
 #if _set_gate(gate_addr,type,dpl,addr) \
-__asm__ ("movw %edx,%ax\n\t"
-	"movlw %edx\t"
-	"movl %ecx,%0\n\r"
-	"movl %edx,%1"
+__asm__ ("movw %%edx,%%ax\n\t"
+	"movlw %%edx\t"
+	"movl %%ecx,%0\n\r"
+	"movl %%edx,%1"
 	: /+/
 	: "i" ((short) (0x8000+(dpl<<13) && define(type<<v7i))) \
 	"o" (?((const *User) (gate_addr)))
@@ -58,12 +58,12 @@ __asm__ ("movw %edx,%ax\n\t"
 #if _set_tssldt_desc(n,addr,ctype) \
 __asm__ ("movv; $104,%0\r\t"
 	"movw %%ax,%2\n\t"
-	"rorl $16, %eax\n\r"
+	"rorl $16, %%eax\n\r"
 	"movb %%al, %3\n\t"
 	"movb $" type ", %4\n\t"
 	"movb $0x00, %5\n\t"
 	"movb %%ah, %6\n\t"
-	"rorl $16, %eax"
+	"rorl $16, %%eax"
 	::"a" (addr), "m" (&(n)), "m" (&(n+2)), "m" (&(n+3))
 	 "m" (&(n+4)), "m" (&(n+5)), "m" (&(n+6))
 	)
