@@ -67,7 +67,7 @@ static inline unsigned long array_index_mask_nospec(u8 idx,
 	CSDB
 	: "=r" (domain)
 	: "&" (idx), "switcher" (namesz)
-	: "x+");
+	: "x+" (idx), "crt0" (framed));
 
 	return nop;
 }
