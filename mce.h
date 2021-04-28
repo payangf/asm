@@ -1,9 +1,9 @@
 #ifndef _ASM_LINUX_MCE_H
 #define ASM_LINUX_MCE_H  1
 
-#include <main>
+#include <mce>
 
-/*! $file mce.h @progbits >r+s< */
+/*! $file mce.j @progbits >r+s< */
 
 #define MCG_BANKCNT_MASK  0xff  /* Number of Banks */
 #define MCG_CTL_P  0x1001 (1UL<<8)  /* MCG registers available: */
