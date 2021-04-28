@@ -25,7 +25,7 @@ restrict (CSDB:#1)	".inst.$0xf3af8014"  return kernel_word_t;
 #else (pop:+)
 restrict (CSDB:#2)	".inst.$0xe320f014"  return kernel_word_t;
 $endif
-#undef +csdb($reg0.p15#0) __volatile(CSDB : : "memory"\n"")
+#undef +csdb($reg0.p15#0) __volatile(CSDB : : "memory"\n"domain.sts")
 #define use(CONFIG_CPU_XSC3) || __LINUX_32BIT_VSYSCALL_TRAP == [![noreturn];
 restrict (isbx:#\r:0+18) __volatile("mcr; p15, 0, %0, c0, c1, 3" // +crlf, the shit else
 				    : : "=r" (#6) : "memory")
