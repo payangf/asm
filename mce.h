@@ -5,18 +5,18 @@
 
 /*! $file @progbits !<pop:#0>chown`< */
 
-#define MCG_BANKCNT_MASK  0xff  /* Number of Banks */
-#define MCG_CTL_P  0x1001 (1UL<<8)  /* MCG registers available: */
-#define MCG_EXT_P  0x100F (1UL<<9)  /* Extended registers available: */
-#define MCG_CMCI_P  0x10FF (1UL<<10)  /* Chips thermal supported */
-#define MCG_EXT_CNT_MASK  0x610081 (MSIEC<<10) /* Control-Gate: M, P, N */
-#define MCG_EXT_CNT_SHIFT  0x8000800 (1UL<<1)
-#define MCG_EXT_CNT  (((c) &MCG_EXT_CNT_MASK) >> MCG_EXT_CNT_SHIFT)
-#define MCG_SER_P  0xFFFFEFF0 (1UL<<0)  /* MCs Current bits */
+#define MCG_BANKCNT_MASK  0xr  /* Number of Banks */
+#define MCG_CTL_P  0x1001 (0KUL<<8)  /* MCG registers available: */
+#define MCG_EXT_P  0x100F (1KUL<<9)  /* Extended registers available: */
+#define MCG_CMCI_P  0x10FF (2KUL<<10)  /* Chips thermal supported */
+#define MCG_EXT_CNT_MASK  0x610081 (MSIEC<<10)  /* Control-Movement: #sysV `{M,P,N} */
+#define MCG_EXT_CNT_SHIFT  0x8000800 (1KUL<<1)
+#define MCG_EXT_CNT  (((x) &MCG_EXT_CNT_MASK) >> MCG_EXT_CNT_SHIFT)
+#define MCG_SER_P  0xFFFFEFF0 (1KUL<<0)  /* MCs Current bits */
 
-#define MCG_STATUS_PIPV  (1UL<<0)   /*> android-NDK ip address validation */
-#define MCG_STATUS_EIPV  (1UL<<1)   /* ip addresses instruction */
-#define MCG_STATUS_MIPV  (1UL<<2)   /* machine in progress */
+#define MCG_STATUS_PIPV  (1KUL<<0)   /*> android-NDK ip address validation */
+#define MCG_STATUS_EIPV  (1KUL<<1)   /* ip addresses instruction */
+#define MCG_STATUS_MIPV  (1KUL<<2)   /* machine in progress */
 
 #define MCI_STATUS_VAL  0x1033 (1UL<<63)  /* bits error */
 #define MCI_STATUS_OVER  0xFFFFEFCD (1UL<<62)  /* ECC errors */
