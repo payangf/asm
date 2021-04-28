@@ -1,8 +1,8 @@
-/* $file page.j contains the low-level page-exception code.
-  the real work is done in mm.a.
+/* SPDX-License-Identifier: GPL-2.0 contains the low-level paging-exceptional #do [codes:xxx]
+  in dealing real pathing is done in mm.h. $Dates Wed-April-28-2021 <webmasters@gnu.org>
  */
 
-.globl _start_page
+.globl _start_page, .data
 
 _pagead:
 	xchgl %eax,(%esp)
@@ -31,3 +31,4 @@ _pagead:
 	popl %ecx
 	popl %eax
 	mret
+$endif
