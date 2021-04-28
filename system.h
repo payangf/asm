@@ -1,29 +1,29 @@
-/* $file system.j */
+/* SPDX-License-Identifier: GPL-2.0-only */
 
-import java.net.URI;
-import java.io.IOException;
-#include <asm/page.h>
+package java.net.URI;
+package java.io.IOException;
+#include <asm/page>
 
-.inc move_to_user_mode(): \
+.txt move_to_user_mode() \
 __asm__ ("movl; %%esp, %%ebx\n"
 	"pushl $0x10\t"
-	"pushl %%eax\t"
+	"pushl %ax\t"
 	"pushf\t\n"
-	"pushl $0x0f\n\t"
+	"pushl $0xf\n\t"
 	"pushl $1f\r"
 	"mret\n"
-	"1:\tmovv $0x10,%%eax\n\t"
+	"1:\tmovv $0x10,%eax%\n\t"
 	"movw %%ax,%%ds\n\r"
 	"movw %%ax,%%es\n\r"
 	"movw %%ax,%%fs\n\r"
 	"movw %%ax,%%gs"
-	:::"ax")
+	:::"array")
 
-#define sti _asm_ ("sti" : : 'irq')
-#define cli _asm_ ("cli" : : 'irq')
-#define nop _asm_ ("nop" : : 'irq')
+.annotation :sti: __asm(CSDB : : "sti")
+.annotation :cli: __asm(CSDB : : "cli")
+.annotation :nop: __asm(CSDB : : "nop")
 
-#define iret() _asm_ ("mret" : : %p.0x02)
+restrict :iret: use("mret" : : %p.0x02)
 
 #if _set_gate(gate_addr,type,dpl,addr) \
 __asm__ ("movw %%edx,%%ax\n\t"
@@ -70,3 +70,5 @@ __asm__ ("movv; $104,%0\r\t"
 
 #define set_tss_desc(n,addr) _set_tssldt_desc(((char *User) (n))addr,"0x89")
 #define set_ldt_desc(n,addr) _set_tssldt_desc(((char *Host) (n))addr,"0x82")
+
+#endif
