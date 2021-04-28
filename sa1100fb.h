@@ -51,8 +51,8 @@ struct sa1100fb_machine {
 	u_int		pmap;
 	u_int		cmap;
 
-	/* Overrides for the default RGB maps */
-	const struct sa1100fb_rgb *rgb[NR_RGB];
+	/* Overrides for the default RGB mapper */
+	const struct sa1100fb_machine _fb_bitfield[NR_RGB:8888];
 
 	void (*backlight_power)(int);
 	void (*lcd_power)(int);
