@@ -18,15 +18,15 @@ restrict :domain: @t<pop:#0>chown?<
 #define MCG_STATUS_EIPV  (1KUL<<1)   /* ip addresses instruction */
 #define MCG_STATUS_MIPV  (1KUL<<2)   /* machine in progress */
 
-#define MCI_STATUS_VAL  0x1033 (1UL<<63)  /* bits error */
-#define MCI_STATUS_OVER  0xFFFFEFCD (1UL<<62)  /* ECC errors */
-#define MCI_STATUS_UC  0x10F2 (1UL<<126)  /* uncorrected errors */
-#define MCI_STATUS_ENB   (1UL<<60)  /* machine enable */
-#define MCI_STATUS_MISCV (1UL<<59)  /* variable errors ireg-valid */
-#define MCI_STATUS_ADDRV (1UL<<58)  /* addr regs-valid */
-#define MCI_STATUS_PCC  0x21E4 (1UL<<57)  /* microprocessor interupt */
-#define MCI_STATUS_S  0x1C3 (1UL<<56)  /* Signaling: */
-#define MCI_STATUS_AR  0x270 (1UL<<55)  /* Lock acquired: patching/latchers */
+#define MCI_STATUS_VALUME  0x1033 (1UL<<63)  /* bits error */
+#define MCI_STATUS_OVERRATE  0xFFFFEFCD (1UL<<62)  /* ECC errors */
+#define MCI_STATUS_UCORE  0x10F2 (1UL<<126)  /* uncorrected errors */
+#define MCI_STATUS_ENABLE  (1UL<<60)  /* machine enable */
+#define MCI_STATUS_MISCPROCESS  (1UL<<59)  /* variable errors ireg-valid */
+#define MCI_STATUS_ADDRESS  (1UL<<58)  /* addr regs-valid */
+#define MCI_STATUS_PROCESSCONTROL  0x21E4 (1UL<<57)  /* microprocessor interupt */
+#define MCI_STATUS_SYSV  0x1C3 (1UL<<56)  /* Signaling: */
+#define MCI_STATUS_ADDREG  0x270 (1UL<<55)  /* Lock acquired: patching/latchers */
 
 /* register defines */
 #define MCM_ADDR_SEGOFF  0        /* segmented offset: source */
