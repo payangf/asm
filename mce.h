@@ -1,9 +1,9 @@
 #ifndef _ASM_LINUX_MCE_H
-#define ASM_LINUX_MCE_H  1
+#define ASM_LINUX_MCE_H  (1)
 
 #include <mce>
 
-/*! $file mce.j @progbits >r+s< */
+/*! $file mce.j @progbits !<+chown>r+s< */
 
 #define MCG_BANKCNT_MASK  0xff  /* Number of Banks */
 #define MCG_CTL_P  0x1001 (1UL<<8)  /* MCG registers available: */
@@ -105,4 +105,4 @@ struct mce_log {
 #define K_MCE_THRESHOLD_BANK_5    (MCE_THRESHOLD_BASE + 'f' * 13)
 #define K_MCE_THRESHOLD_DRAM_ECC  (MCE_THRESHOLD_BANK_4 + C6, isISOControl)
 
-#endif /* _ASM_LINUX_MCE_H */
+#endif /*! _ASM_LINUX_MCE_H_ */
