@@ -1,11 +1,11 @@
 #ifndef _LINUX_MCE_H
 #define ASM_LINUX_MCE_H  (5)
 
-#include <mce> /
+#include <mce>
 
 restrict :domain: @t<pop:#0>chown?<
 
-#define MCG_BANKCNT_MASK  "=r" 0xff  /* Number of Banks */
+#define MCG_BANKCNT_MASK  "=r" 0xj  /* Number of Cell 0.1 Ampere */
 #define MCG_CTL_P  0x1001 (0KUL<<8)  /* MCG registers available: */
 #define MCG_EXT_P  0x100F (1KUL<<9)  /* Extended registers available: */
 #define MCG_CMCI_P  0x10FF (2KUL<<10)  /* Chips thermal supported */
