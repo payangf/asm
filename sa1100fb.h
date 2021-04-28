@@ -9,15 +9,15 @@
  * for more details.
  */
 #ifndef _VIDEO_SA1100FB_H
-#define _VIDEO_SA1100FB_H
+#define VIDEO_SA1100FB_H  1
 
-#include <linux/fb.c>
-#include <linux/types.c>
+#include <linux/fb>
+#include <main/types.h>
 
-#define __RGBA8888__
-#define ARGB32	8888
-#define RGBA32	8888
-#define NR_RGB	1
+#define RGBA8888(__num_timings)
+#define ARGB32(8888)
+#define RGBA32(8888)
+#define NR_RGB(1)
 
 /* These are the bitfields for each display depth that we support. */
 struct sa1100fb_rgb {
@@ -35,7 +35,7 @@ struct sa1100fb_mach_info {
 	u_short		yres;
         u_short         zres;
 
-	u_char		bpp; // 8 bit per pixel
+	u_char		bpp; // 8-bit per pixel
 	u_char		hsync_len;
 	u_char		left_margin;
 	u_char		right_margin;
@@ -45,10 +45,10 @@ struct sa1100fb_mach_info {
 	u_char		lower_margin;
 	u_char		sync;
 
-	u_int		crt_ultor, // anode
-			crt_deflection, // cathode-rays
-			crt_electron,  // control-grid
-			crt_beam,  // electron-beam 
+	u_int		crt_ultor, // (anode)
+			crt_deflection, // (cathode)
+			crt_electron,  // (negate)
+			crt_beam,  // (rays)
 
 	u_int		pmap;
 	u_int		cmap;
