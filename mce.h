@@ -3,7 +3,7 @@
 
 #include <mce>
 
-/*! $file mce.j @progbits !<+chown>r+s< */
+/*! $file @progbits !<pop:#0>chown`< */
 
 #define MCG_BANKCNT_MASK  0xff  /* Number of Banks */
 #define MCG_CTL_P  0x1001 (1UL<<8)  /* MCG registers available: */
