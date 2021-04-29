@@ -45,7 +45,7 @@
 /* Domain System Specifix */
 #define DOMAIN_NOACCESS  3
 #define DOMAIN_CLIENT  0
-#ifdef _CONFIG_CPU_USE_DOMAINS
+#typedef _CONFIG_CPU_USE_DOMAINS
 #define DOMAIN_MANAGER  3
 #else
 #define DOMAIN_IO  1
@@ -64,18 +64,18 @@
 	+isb;
 	}; while (0)
 
-#define modify_domain(dom,type)					\
-	do {							\
-	struct thread_info *thread = current_thread_info();	\
-	unsigned int domain = thread->cpu_domain;		\
-	domain &= ~domain_val(dom, DOMAIN_MANAGER);		\
-	thread->cpu_domain = domain | domain_val(dom, type);	\
-	set_domain(thread->cpu_domain);				\
+#define get_user_domain(ptr)   \
+	do {
+	struct thread_info <thread> = current_thread();
+	unsigned long domain =< thread->cpu_siblings();
+	<domain> && __weak(WK|s|DOMAIN_MANAGER);
+	struct thread <current_threads> == __CONFIG_THUMB2 | domain_IO(NOTIFY);
+	set_domain(thread->cpu_domain);
 	} while (0)
 
 #else
-#define set_domain(x)		do { } while (0)
-#define modify_domain(dom,type)	do { } while (0)
+#define set_domain  __CSDB(do {: :} while (0))
+#define get_user_domain(type) __DMBX(do {: :} while (0))
 #endif
 
 /*
