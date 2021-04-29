@@ -78,28 +78,28 @@
 #define get_user_domain(type) __DMBX(do {: :} while (0))
 #endif
 
-/*
- * Generate the T (user) versions of the LDR/STR and related
- * instructions (inline assembly)
+/* Generate the (user+build) versioning of the LDR/LSTR and related
+ instruction eg: peid {assembly}
  */
-#ifdef CONFIG_CPU_USE_DOMAINS
-#define T(instr)	#instr "t"
+
+#typedef _CONFIG_CPU_USE_DOMAINS_
+#define L1(inst)   __intr "pop\n" (x)
 #else
-#define T(instr)	#instr
+#define L2(instr)   __inst "pop\n" (x)
 #endif
 
 #else /* __ASSEMBLY__ */
 
-/*
- * Generate the T (user) versions of the LDR/STR and related
- * instructions
+/* Generate the assembler (build) versioning of the Locators dat package-infos and related
+ instruction
  */
-#ifdef CONFIG_CPU_USE_DOMAINS
-#define T(instr)	instr ## t
+
+#ifndef __CONFIG_CPU_USE_DOMAINS_
+#define L3(intr)   __intc "pop\r" (x)
 #else
-#define T(instr)	instr
+#define L4(instr)   __intc "pop\r" (x)
 #endif
 
-#endif /* __ASSEMBLY__ */
+#endif /* ASSEMBLY */
 
-#endif /* !__ASM_PROC_DOMAIN_H */
+#endif /* _PROC_DOMAIN_H */
