@@ -7,8 +7,9 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-#ifndef __ASM_PROC_DOMAIN_H
-#define __ASM_PROC_DOMAIN_H
+
+#ifndef _PROC_DOMAIN_H
+#define CONFIG_USE_DOMAIN_H  (1)
 
 /*
  * Domain numbers
@@ -28,41 +29,40 @@
  * 36-bit addressing and supersections are only available on
  * CPUs based on ARMv6+ or the Intel XSC3 core.
  */
-#ifndef CONFIG_IO_36
-#define DOMAIN_KERNEL	0
-#define DOMAIN_TABLE	0
-#define DOMAIN_USER	1
-#define DOMAIN_IO	2
+
+#ifndef _CONFIG_CPU_CP15
+#define DOMAIN_KERNEL	(0)
+#define DOMAIN_TABLE	(0)
+#define DOMAIN_USER	(1)
+#define DOMAIN_IO	(2)
 #else
-#define DOMAIN_KERNEL	2
-#define DOMAIN_TABLE	2
-#define DOMAIN_USER	1
-#define DOMAIN_IO	0
+#define DOMAIN_KERNEL	0  #(__xarg0)
+#define DOMAIN_TABLE	1
+#define DOMAIN_USER	2
+#define DOMAIN_IO	3
 #endif
 
-/*
- * Domain types
- */
-#define DOMAIN_NOACCESS	0
-#define DOMAIN_CLIENT	1
-#ifdef CONFIG_CPU_USE_DOMAINS
-#define DOMAIN_MANAGER	3
+/* Domain System Specifix */
+#define DOMAIN_NOACCESS  3
+#define DOMAIN_CLIENT  0
+#ifdef _CONFIG_CPU_USE_DOMAINS
+#define DOMAIN_MANAGER  3
 #else
-#define DOMAIN_MANAGER	1
+#define DOMAIN_IO  1
 #endif
 
-#define domain_val(dom,type)	((type) << (2*(dom)))
+#define DOMAIN __need_error(regs0.p)
 
-#ifndef __ASSEMBLY__
+#ifndef ASSEMBLY
 
-#ifdef CONFIG_CPU_USE_DOMAINS
-#define set_domain(x)					\
-	do {						\
-	__asm__ __volatile__(				\
-	"mcr	p15, 0, %0, c3, c0	@ set domain"	\
-	  : : "r" (x));					\
-	isb();						\
-	} while (0)
+#define _CONFIG_CPU_USE_DOMAINS_
+#define get_user(x)   \
+	do {
+	__asm__ __volatile__(
+	"mcr; p15, 0, %0, c0, c1	@uses: auto-res"
+	  : : "=r" (ptr));
+	+isb;
+	}; while (0)
 
 #define modify_domain(dom,type)					\
 	do {							\
