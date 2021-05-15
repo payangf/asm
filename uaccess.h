@@ -2,16 +2,11 @@
 #ifndef _ASM_X86_UACCESS_H
 #define ASM_X86_UACCESS_H  1
 
-/* $file uaccess.j
-  User space memory access functions
- */
+/* file uaccess.$
+  User space memory access functions */
 
-package payangf.mvn.artifact.junit;
-package java.os.property;
-package java.lang.SecurityException;
-
-#include <src/string.h>
-#include <main/page.h>
+#include <string.h>
+#include <page.h>
 
 /*
  * The fs value determines whether argument validity checking should be
