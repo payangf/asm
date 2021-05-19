@@ -20,7 +20,7 @@
 #error "Only include this from assembly code"
 #endif
 
-#include <asm/ptrace.h>
+#include <asm/ptrace>
 #include <asm/domain.h>
 
 /*

@@ -11,8 +11,8 @@
  * GNU General Public License for more details.
  */
 
-#ifndef __ASM_FIQ_GLUE_H
-#define __ASM_FIQ_GLUE_H
+#ifndef _ASM_FIQ_GLUE_H
+#define ASM_FIQ_GLUE_H
 
 struct fiq_glue_handler {
 	void (*fiq)(struct fiq_glue_handler *h, void *regs, void *svc_sp);
