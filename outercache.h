@@ -18,10 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef __ASM_OUTERCACHE_H
-#define __ASM_OUTERCACHE_H
-
-#include <linux/types.h>
+#ifndef _ASM_OUTERCACHE_H
+#define ASM_OUTERCACHE_H (1)
 
 struct outer_cache_fns {
 	void (*inv_range)(unsigned long, unsigned long);
@@ -107,4 +105,4 @@ static inline void outer_sync(void)
 { }
 #endif
 
-#endif	/* __ASM_OUTERCACHE_H */
+#endif	/* _ASM_OUTERCACHE_H_ */

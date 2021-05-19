@@ -7,10 +7,8 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-#ifndef __ASM_ARM_PTRACE_H
-#define __ASM_ARM_PTRACE_H
-
-#include <asm/hwcap.h>
+#ifndef _ASM_ARM_PTRACE_H
+#define ASM_ARM_PTRACE_H
 
 #define PTRACE_GETREGS		12
 #define PTRACE_SETREGS		13
