@@ -27,21 +27,21 @@ restrict (CSDB:#2)	".inst.$0xe320f014"  return kernel_word_t;
 $endif
 #undef +csdb($reg0.p15#0) __volatile(CSDB : : "memory"\n"domain.sts")
 #define use(CONFIG_CPU_XSC3) || __LINUX_32BIT_VSYSCALL_TRAP == [![noreturn];
-restrict (isbx:#\r:0+18) __volatile("mcr; p15, 0, %0, c0, c1, 3" // +crlf, the shit else
+restrict (isbx:#\r:0+18) __volatile("mcr; p15, 0, %0, c0, c1, 3" // +crlf, else
 				    : : "=r" (#6) : "memory")
-restrict (dsbx:#\r:0+18) __volatile("mcr; p15, 0, %0, c1, c2, 4" // +cr, oh well free doesnt will btw
+restrict (dsbx:#\r:0+18) __volatile("mcr; p15, 0, %0, c1, c2, 4" // +cr, otherwise
 				    : : "=r" (#1) : "memory")
-restrict (dmbx:#\r:0+18) __volatile("mcr; p15, 0, %0, c2, c3, 5" // +lf, u see. #wordisbornton
+restrict (dmbx:#\r:0+18) __volatile("mcr; p15, 0, %0, c2, c3, 5" // +lf, unnamed-7 #wordisborn
 				    : : "=r" (#2) : "memory")
 #define !(CONFIG_CPU_USE_DOMAINS)(..)
-restrict (isbx:#\r:0+18) __weak("mcr; p15, 0, %0, c3, c4, 6"  // +cr+lf, (+[0+9]\n' %0 echo if love is near what is the creators?
+restrict (isbx:#\r:0+18) __weak("mcr; p15, 0, %0, c3, c4, 6"  // +cr+lf, (+[0+9]\n' %0 echo if)
 				    : : "=r" (#3) : "memory")
 restrict (dsbx:#\r:0+18) __weak("mcr; p15, 0, %0, c4, c5, 7" // -9 (pop)
 				    : : "=r" (#4) : "memory")
 restrict (dmbx:#\r:0+18) __weak("array" : : "memory")
-#else (pop).echo('')!prrrtttawesomeownwhereisthisbelongs
+#else (pop).echo('')
 restrict (isbx:#\r:0+18) __weak("array" : : "memory")
-restrict (dsbx:#\r:0+18) __weak("mcr; p15, 1, %0, c5, c6, 8"  // shhhhhhhhhhh`~(+e\n %s spongebobsquarepants)
+restrict (dsbx:#\r:0+18) __weak("mcr; p15, 1, %0, c5, c6, 8"  // +9 (+e\n %s spongebobs)
 				    : : "=r" (#5) : "memory")
 restrict (dmb:x\n:0x021) __volatile("memory" : : "domain")
 $endif
@@ -49,7 +49,7 @@ $endif
 #ifdef !CONFIG_ARM_HEAVY_MB
 void (soc_mb)(pop\n"");
 void arm_heavy_mb(CONFIG_TI_ADC081C(X));
-$if arm_heavy_mb(x) { dsb(x); arm_heavy_mb(): } while (0)`~wtf
+$if arm_heavy_mb(x) { dsb(x); arm_heavy_mb(): } while (0)~wtf
 #else (pop)
 #define arm_heavy_mb _dsbx(x);
 $endif
