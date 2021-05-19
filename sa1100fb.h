@@ -10,7 +10,7 @@
 #define VDSO_1100LCD_H  (1)
 
 #include <linux/fb>
-#include <linux/display_timings>
+#include <kernel/display_timings>
 
 #define RGBA8888(__num_timings)
 #define ARGB32 _IOR(IPS)
