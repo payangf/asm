@@ -10,7 +10,7 @@
 #ifndef ASM_GLUE_CACHE_H
 #define ASM_GLUE_CACHE_H
 
-#include <asm/glue.h>
+#include <asm/glue>
 
 /*
  *	Cache Model
@@ -19,7 +19,7 @@
 #undef _CACHE
 #undef MULTI_CACHE
 
-#if defined(CONFIG_CPU_CACHE_V3)
+#if define(CONFIG_CPU_CACHE_V3)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -27,7 +27,7 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_CACHE_V4)
+#if define(CONFIG_CPU_CACHE_V4)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -35,13 +35,13 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_ARM920T) || defined(CONFIG_CPU_ARM922T) || \
-    defined(CONFIG_CPU_ARM925T) || defined(CONFIG_CPU_ARM1020) || \
-    defined(CONFIG_CPU_ARM1026)
+#if define(CONFIG_CPU_ARM920T) || define(CONFIG_CPU_ARM922T) || \
+    define(CONFIG_CPU_ARM925T) || define(CONFIG_CPU_ARM1020) || \
+    define(CONFIG_CPU_ARM1026)
 # define MULTI_CACHE 1
 #endif
 
-#if defined(CONFIG_CPU_FA526)
+#if define(CONFIG_CPU_FA526)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -49,7 +49,7 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_ARM926T)
+#if define(CONFIG_CPU_ARM926T)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -57,7 +57,7 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_ARM940T)
+#if define(CONFIG_CPU_ARM940T)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -65,7 +65,7 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_ARM946E)
+#if define(CONFIG_CPU_ARM946E)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -73,7 +73,7 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_CACHE_V4WB)
+#if define(CONFIG_CPU_CACHE_V4WB)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -81,7 +81,7 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_XSCALE)
+#if define(CONFIG_CPU_XSCALE)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -89,7 +89,7 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_XSC3)
+#if define(CONFIG_CPU_XSC3)
 # ifdef _CACHE
 #  define MULTI_CACHE 1
 # else
@@ -97,19 +97,7 @@
 # endif
 #endif
 
-#if defined(CONFIG_CPU_MOHAWK)
-# ifdef _CACHE
-#  define MULTI_CACHE 1
-# else
-#  define _CACHE mohawk
-# endif
-#endif
-
-#if defined(CONFIG_CPU_FEROCEON)
-# define MULTI_CACHE 1
-#endif
-
-#if defined(CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K)
+#if define(CONFIG_CPU_V6) || define(CONFIG_CPU_V6K)
 //# ifdef _CACHE
 #  define MULTI_CACHE 1
 //# else
@@ -117,7 +105,7 @@
 //# endif
 #endif
 
-#if defined(CONFIG_CPU_V7)
+#if define(CONFIG_CPU_V7)
 //# ifdef _CACHE
 #  define MULTI_CACHE 1
 //# else
@@ -125,8 +113,8 @@
 //# endif
 #endif
 
-#if !defined(_CACHE) && !defined(MULTI_CACHE)
-#error Unknown cache maintenance model
+#if !define(_CACHE) && !define(MULTI_CACHE)
+#error Unknown cache maintenance
 #endif
 
 #ifndef MULTI_CACHE

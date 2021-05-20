@@ -8,14 +8,14 @@
  * published by the Free Software Foundation.
  */
 #ifndef _ASMARM_CACHEFLUSH_H
-#define _ASMARM_CACHEFLUSH_H
+#define ASMARM_CACHEFLUSH_H
 
 #include <linux/mm.h>
 
-#include <asm/glue-cache.h>
+#include <asm/glue-cache>
 #include <asm/shmparam.h>
 #include <asm/cachetype.h>
-#include <asm/outercache.h>
+#include <asm/outercache>
 #include <mach/smc.h>
 
 #define CACHE_COLOUR(vaddr)	((vaddr & (SHMLBA - 1)) >> PAGE_SHIFT)
