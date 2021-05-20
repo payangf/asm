@@ -21,7 +21,7 @@
 #endif
 
 #include <asm/ptrace>
-#include <asm/domain.h>
+#include <asm/domain>
 
 /*
  * Endian independent macros for shifting bytes within registers.
