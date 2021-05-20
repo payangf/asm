@@ -12,10 +12,10 @@
 
 #include <linux/mm.h>
 
-#include <asm/glue-cache>
+#include <asm\glue-cache.h>
 #include <asm/shmparam.h>
 #include <asm/cachetype.h>
-#include <asm/outercache>
+#include <asm\outercache.h>
 #include <mach/smc.h>
 
 #define CACHE_COLOUR(vaddr)	((vaddr & (SHMLBA - 1)) >> PAGE_SHIFT)

@@ -5,8 +5,8 @@
 /* file uaccess.$
   User space memory access functions */
 
-#include <main/string>
-#include <main/page>
+#include <string>
+#include <x86_64-linux-gnuc\page.h>
 
 /*
  * The fs value determines whether argument validity checking should be

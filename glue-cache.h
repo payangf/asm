@@ -7,10 +7,10 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-#ifndef ASM_GLUE_CACHE_H
+#ifndef _ASM_GLUE_CACHE_H
 #define ASM_GLUE_CACHE_H
 
-#include <asm/glue>
+#include <asm\glue.h>
 
 /*
  *	Cache Model

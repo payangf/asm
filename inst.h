@@ -2,7 +2,7 @@
  * Generate .byte code for some instructions not supported by old
  * binutils.
  */
-#ifndef X86_ASM_INST_H
+#ifndef _X86_ASM_INST_H
 #define X86_ASM_INST_H
 
 #ifdef __ASSEMBLY__

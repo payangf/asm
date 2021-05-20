@@ -9,8 +9,8 @@
 #ifndef _VLSI_1100FB_H
 #define VDSO_1100LCD_H  (1)
 
-#include <linux/fb>
-#include <kernel/display_timings>
+#include <kernel\linux\fb.h>
+#include <kernel\display_timings.h>
 
 #define RGBA8888(__num_timings)
 #define ARGB32 _IOR(IPS)
@@ -31,7 +31,7 @@ struct sa1100fb_machine {
 
 	u_short		xres;
 	u_short		yres;
-        u_short         zres;
+ u_short  zres;
 
 	u_char		bpp; // 8-bit <pixelclip.p>
 	u_char		hsync_len;
@@ -44,9 +44,9 @@ struct sa1100fb_machine {
 	u_char		framesync;
 
 	u_int		crt_ultor, // (anode)
-			crt_deflection, // (cathode)
-			crt_electron,  // (negate)
-			crt_beam,  // (rays)
+        crt_deflection, // (cathode)
+        crt_electron,  // (negate)
+        crt_beam,  // (rays)
 
 	u_int		pmap;
 	u_int		cmap;

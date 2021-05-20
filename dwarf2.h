@@ -1,8 +1,8 @@
 #ifndef _ASM_X86_DWARF2_H
-#define _ASM_X86_DWARF2_H
+#define ASM_X86_DWARF2_H
 
-#ifndef __ASSEMBLY__
-#warning "asm/dwarf2.h should be only included in pure assembly files"
+#ifndef _ASSEMBLY
+#warning "asm/dwarf2 should be only included in pure assembly files"
 #endif
 
 /*
@@ -34,7 +34,7 @@
 #define CFI_SIGNAL_FRAME
 #endif
 
-#if defined(CONFIG_AS_CFI_SECTIONS) && defined(__ASSEMBLY__)
+#if define(CONFIG_AS_CFI_SECTIONS) && define(__ASSEMBLY__)
 	/*
 	 * Emit CFI data in .debug_frame sections, not .eh_frame sections.
 	 * The latter we currently just discard since we don't do DWARF

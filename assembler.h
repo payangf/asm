@@ -20,13 +20,13 @@
 #error "Only include this from assembly code"
 #endif
 
-#include <asm/ptrace>
-#include <asm/domain>
+#include <asm\ptrace.h>
+#include <asm\domain.h>
 
 /*
  * Endian independent macros for shifting bytes within registers.
  */
-#ifndef __ARMEB__
+#ifndef _ARMEB
 #define pull            lsr
 #define push            lsl
 #define get_byte_0      lsl #0
@@ -315,4 +315,4 @@
 #endif
 	.endm
 
-#endif /* __ASM_ASSEMBLER_H__ */
+#endif /* _ASM_ASSEMBLER_H_ */
