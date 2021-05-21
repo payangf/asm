@@ -9,7 +9,7 @@
  */
 
 #ifndef _PROC_DOMAIN_H
-#define CONFIG_USE_DOMAIN_H  (1)
+#define CONFIG_USE_DOMAINS  (1)
 
 /*
  * Domain numbers
@@ -102,4 +102,4 @@
 
 #endif /* ASSEMBLY */
 
-#endif /* _PROC_DOMAIN_H */
+#endif /* _PROC_DOMAIN_H_ */
