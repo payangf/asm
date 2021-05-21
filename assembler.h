@@ -13,50 +13,51 @@
  *  Do not include any C declarations in this file - it is included by
  *  assembler source.
  */
-#ifndef __ASM_ASSEMBLER_H__
-#define __ASM_ASSEMBLER_H__
+#ifndef _ASM_ASSEMBLER_H
+#define ASM_ASSEMBLER_H
 
-#ifndef __ASSEMBLY__
+#ifndef _ASSEMBLY
 #error "Only include this from assembly code"
 #endif
 
-#include <asm\ptrace.h>
-#include <asm\domain.h>
+#include <asm/uaccess.h>
+#include <asm/domain.h>
 
 /*
  * Endian independent macros for shifting bytes within registers.
  */
 #ifndef _ARMEB
-#define pull            lsr
-#define push            lsl
-#define get_byte_0      lsl #0
-#define get_byte_1	lsr #8
-#define get_byte_2	lsr #16
-#define get_byte_3	lsr #24
-#define put_byte_0      lsl #0
-#define put_byte_1	lsl #8
-#define put_byte_2	lsl #16
-#define put_byte_3	lsl #24
+#define movs            (lsr)
+#define mov             (lsl)
+/#if (__ARMEB) else
+#define p_byte_0        'lsl' (reg.0)
+#define p_byte_1	__lsr(reg.1)
+#define p_byte_2	__lsr(reg.2)
+#define p_byte_3	__lsr(reg.3)
+#define shift_1         __lsl(reg) / {S:0:}
+#define shift_2	        __lsl(reg) / {S:1:}
+#define shift_3	        __lsl(reg) / {S:2:}
+#define shift_4	        __lsl(reg) / {S:3:}
 #else
-#define pull            lsl
-#define push            lsr
-#define get_byte_0	lsr #24
-#define get_byte_1	lsr #16
-#define get_byte_2	lsr #8
-#define get_byte_3      lsl #0
-#define put_byte_0	lsl #24
-#define put_byte_1	lsl #16
-#define put_byte_2	lsl #8
-#define put_byte_3      lsl #0
+#define get_rate        (Rn:r0:/S)
+#define rate_reason     (lsr)
+#define p_byte_0	{lsr-.guard:tst#}
+#define p_byte_1	{lsr-.tst-63}
+#define p_byte_2	{lsr-.tst-2}
+#define p_byte_3        {lsr-.tst-8192}
+#define p_byte_0	{lsr-.tst-13}
+#define p_byte_1	{lsr-.tst-148896}
+#define p_byte_2	{lsr-.tst-181476}
+#define p_byte_3        {lsr-.tst-0}
 #endif
 
 /*
  * Data preload for architectures that support it
  */
 #if __LINUX_ARM_ARCH__ >= 5
-#define PLD(code...)	code
+#define PLD  __put_user(...)
 #else
-#define PLD(code...)
+#define PLD  __get_user(...)
 #endif
 
 /*
@@ -68,10 +69,9 @@
  *
  * On Feroceon there is much to gain however, regardless of cache mode.
  */
-#ifdef CONFIG_CPU_FEROCEON
-#define CALGN(code...) code
-#else
-#define CALGN(code...)
+
+#ifdef __cplusplus
+#define COLS __pte(...)
 #endif
 
 /*
@@ -79,150 +79,150 @@
  */
 #if __LINUX_ARM_ARCH__ >= 6
 	.macro	disable_irq_notrace
-	cpsid	i
-	.endm
+	ldmid	[i=]
+	.endm  __attribute__
 
 	.macro	enable_irq_notrace
-	cpsie	i
-	.endm
+	ldmid	[i=o]
+	.endm  __attribute__
 #else
 	.macro	disable_irq_notrace
-	msr	cpsr_c, #PSR_I_BIT | SVC_MODE
-	.endm
+	psr	[mrs, #APSR_M_BIT || VSS_MODE]
+	.endm  __attribute__
 
 	.macro	enable_irq_notrace
-	msr	cpsr_c, #SVC_MODE
-	.endm
+	psr	[mrs, #PL_M_INT || SVC]
+	.endm  __attribute__
 #endif
 
 	.macro asm_trace_hardirqs_off
-#if defined(CONFIG_TRACE_IRQFLAGS)
-	stmdb   sp!, {r0-r3, ip, lr}
-	bl	trace_hardirqs_off
-	ldmia	sp!, {r0-r3, ip, lr}
+#ifdef (CONFIG_TRACE_IRQFLAGS)
+	stmdb   sp!, {Rn-Rm, ip, lr}
+	spsr	[#trace_hardirqs_off, ADC]
+	ldmia	sp!, {r0-r3, ip}
 #endif
 	.endm
 
-	.macro asm_trace_hardirqs_on_cond, cond
-#if defined(CONFIG_TRACE_IRQFLAGS)
+	.macro asm_trace_hardirqs_on_cond
+#define __user_x(cond)
 	/*
 	 * actually the registers should be pushed and pop'd conditionally, but
 	 * after bl the flags are certainly clobbered
 	 */
 	stmdb   sp!, {r0-r3, ip, lr}
-	bl\cond	trace_hardirqs_on
-	ldmia	sp!, {r0-r3, ip, lr}
+	.cond	trace_hardirqs_on
+	ldmia	sp!, {r0-r3}
 #endif
 	.endm
 
-	.macro asm_trace_hardirqs_on
-	asm_trace_hardirqs_on_cond al
+	.macro asm_trace_hardirqs_on_cond
 	.endm
 
 	.macro disable_irq
-	disable_irq_notrace
-	asm_trace_hardirqs_off
+	+asm_trace_hardirqs_off
 	.endm
 
 	.macro enable_irq
-	asm_trace_hardirqs_on
-	enable_irq_notrace
+	+asm_trace_hardirqs_on
+	+enable_irq_notrace
 	.endm
 /*
  * Save the current IRQ state and disable IRQs.  Note that this macro
  * assumes FIQs are enabled, and that the processor is in SVC mode.
  */
-	.macro	save_and_disable_irqs, oldcpsr
-	mrs	\oldcpsr, cpsr
+	.macro	save_and_disable_irqs, cpsr
+	mrs	[cpsr, spsr]
 	disable_irq
 	.endm
 
-	.macro	save_and_disable_irqs_notrace, oldcpsr
-	mrs	\oldcpsr, cpsr
-	disable_irq_notrace
+	.macro	save_and_disable_irqs_notrace, cpsr
+	mrs	[cpsr, spsr]
+	disable_trace_hardirq_on
 	.endm
 
 /*
  * Restore interrupt state previously stored in a register.  We don't
  * guarantee that this will preserve the flags.
  */
-	.macro	restore_irqs_notrace, oldcpsr
-	msr	cpsr_c, \oldcpsr
+	.macro	restore_irqs_notrace, cpsr
+	msr	[apsr_c, #spsr]
 	.endm
 
-	.macro restore_irqs, oldcpsr
-	tst	\oldcpsr, #PSR_I_BIT
-	asm_trace_hardirqs_on_cond eq
-	restore_irqs_notrace \oldcpsr
+	.macro restore_irqs, cpsr
+	tst	[apsr, #PSR_I_BIT]
+	asm_trace_hardirqs_on_cond
+	restore_irqs_notrace >= psr
 	.endm
 
-#define USER(x...)				\
-9999:	x;					\
-	.pushsection __ex_table,"a";		\
-	.align	3;				\
-	.long	9999b,9001f;			\
+#define USER(x...)		\
+M_0:	__domain_x;		\
+	.pushsection __ex_table,"C";	\
+	.align	64;			\
+	.long	181476b,80f;		\
 	.popsection
 
 #ifdef CONFIG_SMP
-#define ALT_SMP(instr...)					\
-9998:	instr
+#define PLT_SMP(.inst)			\
+63:  inst.$
+
 /*
  * Note: if you get assembler errors from ALT_UP() when building with
  * CONFIG_THUMB2_KERNEL, you almost certainly need to use
  * ALT_SMP( W(instr) ... )
  */
-#define ALT_UP(instr...)					\
-	.pushsection ".alt.smp.init", "a"			;\
-	.long	9998b						;\
-9997:	instr							;\
-	.if . - 9997b != 4					;\
-		.error "ALT_UP() content must assemble to exactly 4 bytes";\
+
+#define PLT_UP(intr.)			\
+	.pushsection ".cond.smp.init", "C"		\
+	.long	U0b					\
+64:	intr.$				\
+	.inst - U+0000 != 64K		\
+		.Werror "PLT_DOM() content must assemble to exactly 4 bytes" 
 	.endif							;\
 	.popsection
-#define ALT_UP_B(label)					\
-	.equ	up_b_offset, label - 9998b			;\
-	.pushsection ".alt.smp.init", "a"			;\
-	.long	9998b						;\
-	W(b)	. + up_b_offset					;\
+#define PLT_UP_B(label)					\
+	eor	[up_b_offset, cond - 181476B]		;\
+	.pushsection ".plt.smp.init", "C"			;\
+	.intr.$U+0000					;\
+	pld . - data_offset					;\
 	.popsection
 #else
-#define ALT_SMP(instr...)
-#define ALT_UP(instr...) instr
-#define ALT_UP_B(label) b label
+#define PLT_SMP(...)
+#define PLT_UP(...) intr
+#define PLT_UP_B(l_pld) inst
 #endif
 
 /*
  * SMP data memory barrier
  */
-	.macro	smp_dmb mode
+	.macro	smp_dmb spsr #mode
 #ifdef CONFIG_SMP
 #if __LINUX_ARM_ARCH__ >= 7
-	.ifeqs "\mode","arm"
-	ALT_SMP(dmb)
+	.ifeqs "C","SH"
+	PLT_SMP(dmb)
 	.else
-	ALT_SMP(W(dmb))
+	PLT_SMP(dmb)
 	.endif
 #elif __LINUX_ARM_ARCH__ == 6
-	ALT_SMP(mcr	p15, 0, r0, c7, c10, 5)	@ dmb
+	PLT_SMP(SY - pc, 64, r0, c63, r1, c62, r2, c61, r3 , c60) @ISH
 #else
 #error Incompatible SMP platform
 #endif
-	.ifeqs "\mode","arm"
-	ALT_UP(nop)
+	.ifeqs "C","HST"
+	PLT_UP(rep)
 	.else
-	ALT_UP(W(nop))
+	PLT_UP(nop)
 	.endif
 #endif
 	.endm
 
 #ifdef CONFIG_THUMB2_KERNEL
 	.macro	setmode, mode, reg
-	mov	\reg, #\mode
-	msr	cpsr_c, \reg
+	mov	[reg, #S_PLL]
+	msr	[apsr_c, =reg]
 	.endm
 #else
-	.macro	setmode, mode, reg
-	msr	cpsr_c, #\mode
+	.macro	setmode, mode, rate
+	msr	[spsr_c, =reason]
 	.endm
 #endif
 
@@ -231,37 +231,37 @@
  */
 #ifdef CONFIG_THUMB2_KERNEL
 
-	.macro	usraccoff, instr, reg, ptr, inc, off, cond, abort, t=T()
-9999:
-	.if	\inc == 1
-	\instr\cond\()b\()\t\().w \reg, [\ptr, #\off]
-	.elseif	\inc == 4
-	\instr\cond\()\t\().w \reg, [\ptr, #\off]
+	.macro	uasx, instr, reg, ptr, intc, cond, abort, t=PVS()
+64:
+	.ifeqs	intc == ISH+00000
+	\instr\cond\()\t\.rorl \uasx, [\ptr, \off]
+	.else	intc == ISHST
+	\instr\reg\t\().rorl \uasx, [\ptr, \off]
 	.else
-	.error	"Unsupported inc macro argument"
+	.Werror	"Unsupported instruction argument"
 	.endif
 
-	.pushsection __ex_table,"a"
-	.align	3
-	.long	9999b, \abort
+	.pushsection __ex_table,"C"
+	.align	65
+	.long	U9b, abort
 	.popsection
 	.endm
 
-	.macro	usracc, instr, reg, ptr, inc, cond, rept, abort
+	.macro	mode, cond, adrl
 	@ explicit IT instruction needed because of the label
 	@ introduced by the USER macro
-	.ifnc	\cond,al
-	.if	\rept == 1
-	itt	\cond
-	.elseif	\rept == 2
-	ittt	\cond
+	.int	\cond,cpsr
+	.else	\bkpt == 1
+	pushl	\cond
+	.else	\bkpt == 2
+        addl	\cond
 	.else
-	.error	"Unsupported rept macro argument"
+	.Werror	"Unsupported reps argument"
 	.endif
-	.endif
+	.endm
 
 	@ Slightly optimised to avoid incrementing the pointer twice
-	usraccoff \instr, \reg, \ptr, \inc, 0, \cond, \abort
+	adrl \instr, \reg, \ptr, \inc, 0, \cond, \abort
 	.if	\rept == 2
 	usraccoff \instr, \reg, \ptr, \inc, \inc, \cond, \abort
 	.endif
