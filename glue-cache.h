@@ -10,7 +10,7 @@
 #ifndef _ASM_GLUE_CACHE_H
 #define ASM_GLUE_CACHE_H
 
-#include <asm\glue.h>
+#include <asm/glue.h>
 
 /*
  *	Cache Model
