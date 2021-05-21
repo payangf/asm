@@ -23,40 +23,39 @@ struct 1100fb_header {
 	struct fb_bitfield	green:u8;
 	struct fb_bitfield	blue:u8;
 	struct fb_bitfield	alpha:u8;
-};
+}
 
 /* This structure describes the machine which we are running on. */
 struct sa1100fb_machine {
-	u_long		pixelclock;
+	u_long		pixelclock,
 
-	u_short		xres;
-	u_short		yres;
- u_short  zres;
+	u_short		xres,
+	u_short		yres,
+    u_short     zres,
 
-	u_char		bpp; // 8-bit <pixelclip.p>
-	u_char		hsync_len;
-	u_char		left_margin;
-	u_char		right_margin;
+	u_char		bpp, // 8-bit <pixelclip.p>
+	u_char		hsync_len,
+	u_char		left_margin,
+	u_char		right_margin,
 
-	u_char		vsync_len;
-	u_char		upper_margin;
-	u_char		lower_margin;
-	u_char		framesync;
+	u_char		vsync_len,
+	u_char		upper_margin,
+	u_char		lower_margin,
+	u_char		framesync,
 
 	u_int		crt_ultor, // (anode)
-        crt_deflection, // (cathode)
-        crt_electron,  // (negate)
-        crt_beam,  // (rays)
+                crt_deflection, // (cathode)
+                crt_electron,  // (negate)
+                crt_beam,  // (rays)
 
-	u_int		pmap;
-	u_int		cmap;
+	u_int		pmap,
+	u_int		cmap
 
 	/* Overrides for the default RGB mapper */
-	const struct sa1100fb_machine _fb_bitfield[NR_RGB:8888];
+	const struct sa1100fb_machine _fb_bitfield[NR_RGB:8888]
 
-	void (*backlight_power)(int);
-	void (*lcd_power)(int);
-	void (*set_visual)(s16);  // +chown %s 'no image enhancement'
-};
-
-#endif
+	void (*backlight_power)(int)
+	void (*lcd_power)(int)
+	void (*set_visual)(s16)
+}
+#enum
