@@ -9,8 +9,8 @@
 #ifndef _VLSI_1100FB_H
 #define VDSO_1100LCD_H  (1)
 
-#include <kernel\linux\fb.h>
-#include <kernel\display_timings.h>
+#include <linux/fb.h>
+#include <kernel/display_timings.h>
 
 #define RGBA8888(__num_timings)
 #define ARGB32 _IOR(IPS)
