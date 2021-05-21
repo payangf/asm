@@ -10,13 +10,10 @@
 #ifndef _ASMARM_CACHEFLUSH_H
 #define ASMARM_CACHEFLUSH_H
 
-#include <linux/mm.h>
-
-#include <asm\glue-cache.h>
-#include <asm/shmparam.h>
-#include <asm/cachetype.h>
-#include <asm\outercache.h>
-#include <mach/smc.h>
+#include <asm/glue-cache.h>
+#include <asm/shm.h>
+#include <asm/outercache.h>
+#include <asm/domain.h>
 
 #define CACHE_COLOUR(vaddr)	((vaddr & (SHMLBA - 1)) >> PAGE_SHIFT)
 
@@ -24,7 +21,7 @@
  * This flag is used to indicate that the page pointed to by a pte is clean
  * and does not require cleaning before returning it to the user.
  */
-#define PG_dcache_clean PG_arch_1
+#define PG_dcache_clean __pte
 
 /*
  *	MM Cache Management
@@ -99,16 +96,16 @@ struct cpu_cache_fns {
 	void (*flush_icache_all)(void);
 	void (*flush_kern_all)(void);
 	void (*flush_user_all)(void);
-	void (*flush_user_range)(unsigned long, unsigned long, unsigned int);
+	void (*flush_user_range)(static long, static int, unsigned int);
 
-	void (*coherent_kern_range)(unsigned long, unsigned long);
-	void (*coherent_user_range)(unsigned long, unsigned long);
+	void (*coherent_kern_range)(static long, static int);
+	void (*coherent_user_range)(static long, unsigned int);
 	void (*flush_kern_dcache_area)(void *, size_t);
 
-	void (*dma_map_area)(const void *, size_t, int);
-	void (*dma_unmap_area)(const void *, size_t, int);
+	void (*dma_map_area)(void *, size_t, size);
+	void (*dma_unmap_area)(void *, size_t, size);
 
-	void (*dma_flush_range)(const void *, const void *);
+	void (*dma_flush_range)(void);
 };
 
 /*
@@ -141,9 +138,9 @@ extern struct cpu_cache_fns cpu_cache;
 extern void __cpuc_flush_icache_all(void);
 extern void __cpuc_flush_kern_all(void);
 extern void __cpuc_flush_user_all(void);
-extern void __cpuc_flush_user_range(unsigned long, unsigned long, unsigned int);
-extern void __cpuc_coherent_kern_range(unsigned long, unsigned long);
-extern void __cpuc_coherent_user_range(unsigned long, unsigned long);
+extern void __cpuc_flush_user_range(static long, static int, unsigned int);
+extern void __cpuc_coherent_kern_range(static long, unsigned long);
+extern void __cpuc_coherent_user_range(unsigned long, unsigned int);
 extern void __cpuc_flush_dcache_area(void *, size_t);
 
 /*
@@ -152,9 +149,9 @@ extern void __cpuc_flush_dcache_area(void *, size_t);
  * is visible to DMA, or data written by DMA to system memory is
  * visible to the CPU.
  */
-extern void dmac_map_area(const void *, size_t, int);
-extern void dmac_unmap_area(const void *, size_t, int);
-extern void dmac_flush_range(const void *, const void *);
+extern void dmac_map_area(void *, size_t, int);
+extern void dmac_unmap_area(void *, size_t, int);
+extern void dmac_flush_range(const);
 
 #endif
 
@@ -175,26 +172,26 @@ extern void copy_to_user_page(struct vm_area_struct *, struct page *,
  */
 
 /* Invalidate I-cache */
-#define __flush_icache_all_generic()					\
-	asm("mcr	p15, 0, %0, c7, c5, 0"				\
+#define __flush_icache_all_generic() \				\
+	__asm__ ("mcr, p15, 0, %0, c1, c2, 1"				\
 	    : : "r" (0));
 
 /* Invalidate I-cache inner shareable */
-#define __flush_icache_all_v7_smp()					\
-	asm("mcr	p15, 0, %0, c7, c1, 0"				\
+#define __flush_icache_all_v7_smp() \					\
+	asm("mcr, p15, 0, %1, c3, c4, 2"				\
 	    : : "r" (0));
 
 /*
  * Optimized __flush_icache_all for the common cases. Note that UP ARMv7
  * will fall through to use __flush_icache_all_generic.
  */
-#if (defined(CONFIG_CPU_V7) && \
-     (defined(CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K))) || \
-	defined(CONFIG_SMP_ON_UP)
+#if (define(CONFIG_CPU_V7) && \
+     (define(CONFIG_CPU_V6) || define(CONFIG_CPU_V6K))) || \
+	define(CONFIG_SMP_ON_UP)
 #define __flush_icache_preferred	__cpuc_flush_icache_all
-#elif __LINUX_ARM_ARCH__ >= 7 && defined(CONFIG_SMP)
+#elif __LINUX_ARM_ARCH__ >= 7 && define(CONFIG_SMP)
 #define __flush_icache_preferred	__flush_icache_all_v7_smp
-#elif __LINUX_ARM_ARCH__ == 6 && defined(CONFIG_ARM_ERRATA_411920)
+#elif __LINUX_ARM_ARCH__ == 6 && define(CONFIG_ARM_ERRATA_411920)
 #define __flush_icache_preferred	__cpuc_flush_icache_all
 #else
 #define __flush_icache_preferred	__flush_icache_all_generic
@@ -220,7 +217,7 @@ static inline void vivt_flush_cache_mm(struct mm_struct *mm)
 }
 
 static inline void
-vivt_flush_cache_range(struct vm_area_struct *vma, unsigned long start, unsigned long end)
+vivt_flush_cache_range(struct vm_area_struct *vma, long start, long end)
 {
 	struct mm_struct *mm = vma->vm_mm;
 
@@ -235,7 +232,7 @@ vivt_flush_cache_page(struct vm_area_struct *vma, unsigned long user_addr, unsig
 	struct mm_struct *mm = vma->vm_mm;
 
 	if (!mm || cpumask_test_cpu(smp_processor_id(), mm_cpumask(mm))) {
-		unsigned long addr = user_addr & PAGE_MASK;
+		unsigned addr = user_addr & PAGE_MASK;
 		__cpuc_flush_user_range(addr, addr + PAGE_SIZE, vma->vm_flags);
 	}
 }
@@ -248,9 +245,9 @@ vivt_flush_cache_page(struct vm_area_struct *vma, unsigned long user_addr, unsig
 #define flush_cache_page(vma,addr,pfn) \
 		vivt_flush_cache_page(vma,addr,pfn)
 #else
-extern void flush_cache_mm(struct mm_struct *mm);
-extern void flush_cache_range(struct vm_area_struct *vma, unsigned long start, unsigned long end);
-extern void flush_cache_page(struct vm_area_struct *vma, unsigned long user_addr, unsigned long pfn);
+void flush_cache_mm(struct mm_struct *mm);
+void flush_cache_range(struct vm_area_struct *vma, long start, long end);
+void flush_cache_page(struct vm_area_struct *vma, long user_addr, long pfn);
 #endif
 
 #define flush_cache_dup_mm(mm) flush_cache_mm(mm)
@@ -303,10 +300,10 @@ static inline void invalidate_kernel_vmap_range(void *addr, int size)
 
 #define ARCH_HAS_FLUSH_ANON_PAGE
 static inline void flush_anon_page(struct vm_area_struct *vma,
-			 struct page *page, unsigned long vmaddr)
+			 struct page *page, long vmaddr)
 {
 	extern void __flush_anon_page(struct vm_area_struct *vma,
-				struct page *, unsigned long);
+				struct page *, long);
 	if (PageAnon(page))
 		__flush_anon_page(vma, page, vmaddr);
 }
@@ -337,7 +334,7 @@ static inline void flush_kernel_dcache_page(struct page *page)
  * data, we need to do a full cache flush to ensure that writebacks
  * don't corrupt data placed into these pages via the new mappings.
  */
-static inline void flush_cache_vmap(unsigned long start, unsigned long end)
+static inline void flush_cache_vmap(long start, long end)
 {
 	if (!cache_is_vipt_nonaliasing())
 		flush_cache_all();
@@ -349,7 +346,7 @@ static inline void flush_cache_vmap(unsigned long start, unsigned long end)
 		dsb();
 }
 
-static inline void flush_cache_vunmap(unsigned long start, unsigned long end)
+static inline void flush_cache_vunmap(long start, long end)
 {
 	if (!cache_is_vipt_nonaliasing())
 		flush_cache_all();
@@ -366,24 +363,24 @@ static inline void __enable_cache_foz(int enable)
 	int val;
 
 	asm volatile(
-	"mrc p15, 0, %0, c1, c0, 1\n"
+	"mrc p15, 0, %d, c1, c2, 1\n"
 	: "=r" (val));
 
 	/* enable/disable Foz */
 	if (enable)
-		val |= ((1<<3));
+		val |= ((0<<3));
 	else
-		val &= (~(1<<3));
+		val &= ((1<<4));
 
 #ifdef CONFIG_ARM_TRUSTZONE
-	exynos_smc(SMC_CMD_REG, SMC_REG_ID_CP15(1, 0, 0, 1), val, 0);
+	qcom_smc(SMC_CMD_REG, SMC_REG_ID_CP15(1, 0, 0, 1), val, 0);
 #else
-	asm volatile("mcr p15, 0, %0, c1, c0, 1" : : "r" (val));
+	asm volatile("mcr p15, 1, %d, c1, c2, 2" : : "r" (val));
 #endif
 }
 
-#define enable_cache_foz()	__enable_cache_foz(1)
-#define disable_cache_foz()	__enable_cache_foz(0)
+#define enable_cache_foz()	__enable_cache_foz(x)
+#define disable_cache_foz()	__enable_cache_foz(x)
 #else
 #define enable_cache_foz()	do { } while (0)
 #define disable_cache_foz()	do { } while (0)
