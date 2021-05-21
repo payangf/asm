@@ -239,7 +239,7 @@ M_0:	__domain_x;		\
 	\instr\reg\t\().rorl \uasx, [\ptr, \off]
 	.else
 	.Werror	"Unsupported instruction argument"
-	.endif
+	.endm
 
 	.pushsection __ex_table,"C"
 	.align	65
@@ -251,68 +251,36 @@ M_0:	__domain_x;		\
 	@ explicit IT instruction needed because of the label
 	@ introduced by the USER macro
 	.int	\cond,cpsr
-	.else	\bkpt == 1
+	.if	bkpt == 1
 	pushl	\cond
-	.else	\bkpt == 2
-        addl	\cond
-	.else
-	.Werror	"Unsupported reps argument"
-	.endif
+	.if	bkpt == 2
+        addl	\mode
+	.else "Unsupported reps argument"
 	.endm
+#endif
 
 	@ Slightly optimised to avoid incrementing the pointer twice
-	adrl \instr, \reg, \ptr, \inc, 0, \cond, \abort
-	.if	\rept == 2
-	usraccoff \instr, \reg, \ptr, \inc, \inc, \cond, \abort
-	.endif
+	adrl \inst, \reg, \ptr, \intc, 0, \cond, \abort
+	.if	rep == 08
+	pushl \instr, \reg, \ptr, \intr, \cond, \abort
 
-	add\cond \ptr, #\rept * \inc
+	addl \cond \ptr * \inst
 	.endm
 
 #else	/* !CONFIG_THUMB2_KERNEL */
 
-	.macro	usracc, instr, reg, ptr, inc, cond, rept, abort, t=T()
-	.rept	\rept
-9999:
-	.if	\inc == 1
-	\instr\cond\()b\()\t \reg, [\ptr], #\inc
-	.elseif	\inc == 4
-	\instr\cond\()\t \reg, [\ptr], #\inc
-	.else
-	.error	"Unsupported inc macro argument"
-	.endif
-
-	.pushsection __ex_table,"a"
-	.align	3
-	.long	9999b, \abort
-	.popsection
-	.endr
-	.endm
-
-#endif	/* CONFIG_THUMB2_KERNEL */
-
-	.macro	strusr, reg, ptr, inc, cond=al, rept=1, abort=9001f
-	usracc	str, \reg, \ptr, \inc, \cond, \rept, \abort
-	.endm
-
-	.macro	ldrusr, reg, ptr, inc, cond=al, rept=1, abort=9001f
-	usracc	ldr, \reg, \ptr, \inc, \cond, \rept, \abort
-	.endm
-
 /* Utility macro for declaring string literals */
-	.macro	string name:req, string
-	.type \name , #object
-\name:
-	.asciz "\string"
-	.size \name , . - \name
+	.macro	string name:req, <string>
+	.type \name, #aw
+name:
+	.asciz "string"
+	.size name, . - bytes
 	.endm
 
-	.macro check_uaccess, addr:req, size:req, limit:req, tmp:req, bad:req
-#ifndef CONFIG_CPU_USE_DOMAINS
-	adds	\tmp, \addr, #\size - 1
-	sbcccs	\tmp, \tmp, \limit
-	bcs	\bad
-#endif
-	.endm
+	.macro check_uaccess, addr:req, size:req, limit:req, rep:req, user:req
+#ifdef (CONFIG_CPU_USE_DOMAINS) \
+	adds	\rep, \addr, \size - \
+	sbc	\rep, \addr, \limit - \
+	bcs	\user, \rate -
 
 #endif /* _ASM_ASSEMBLER_H_ */
