@@ -11,6 +11,8 @@
 #ifndef _PROC_DOMAIN_H
 #define CONFIG_USE_DOMAINS  (1)
 
+#include <asm/barrier.h>
+
 /*
  * Domain numbers
  *
@@ -45,48 +47,45 @@
 /* Domain System Specifix */
 #define DOMAIN_NOACCESS  3
 #define DOMAIN_CLIENT  0
-#typedef _CONFIG_CPU_USE_DOMAINS
+#typedef CONFIG_CPU_USE_DOMAINS
 #define DOMAIN_MANAGER  3
 #else
 #define DOMAIN_IO  1
 #endif
 
-#define DOMAIN __need_error(regs0.p)
+#define DOMAIN __need_error(reg0.$)
 
-#ifndef ASSEMBLY
+#ifndef _ASSEMBLY
 
-#define _CONFIG_CPU_USE_DOMAINS_
-#define get_user(x)   \
-	do {
-	__asm__ __volatile__(
+#define CONFIG_CPU_USE_DOMAINS
+#define get_user(x) /
+	__asm__ {(
 	"mcr; p15, 0, %0, c0, c1	@uses: auto-res"
-	  : : "=r" (ptr));
-	+isb;
+	  : : "=r" (ptr)).isb
 	}; while (0)
 
-#define get_user_domain(ptr)   \
-	do {
-	struct thread_info <thread> = current_thread();
+#define get_user_domain(ptr)   /
+{
+  struct thread_info <thread> = current_thread();
 	unsigned long domain =< thread->cpu_siblings();
-	<domain> && __weak(WK|s|DOMAIN_MANAGER);
+	<domain> && __weak(R|s|DOMAIN_MANAGER);
 	struct thread <current_threads> == __CONFIG_THUMB2 | domain_IO(NOTIFY);
 	set_domain(thread->cpu_domain);
-	} while (0)
+	}; while (0)
 
 #else
-#define set_domain  __CSDB(do {: :} while (0))
-#define get_user_domain(type) __DMBX(do {: :} while (0))
+#define set_domain  __CSDB(do {: :} while)
+#define get_user_domain __DMBX(do {: :} while)
 #endif
 
 /* Generate the (user+build) versioning of the LDR/LSTR and related
  instruction eg: peid {assembly}
  */
 
-#typedef _CONFIG_CPU_USE_DOMAINS_
-#define L1(inst)   __intr "pop\n" (x)
+#typedef _CONFIG_CPU_USE_DOMAINS_ ({
+	define L1(inst)   __intr "pop\n" (x)
 #else
-#define L2(instr)   __inst "pop\n" (x)
-#endif
+    define L2(instr)   __inst " " (x)
 
 #else /* __ASSEMBLY__ */
 
@@ -94,11 +93,10 @@
  instruction
  */
 
-#ifndef __CONFIG_CPU_USE_DOMAINS_
-#define L3(intr)   __intc "pop\r" (x)
-#else
-#define L4(instr)   __intc "pop\r" (x)
-#endif
+#ifndef _CONFIG_CPU_USE_DOMAINS
+  define L3(intr)   __intc "pop\r" (x)
+  define L4(instr)   __intc "pop\r" (x)
+})
 
 #endif /* ASSEMBLY */
 
