@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 
 package java.net.URI;
-#include <asm\page.h>
+#include <asm/page.h>
 
 .txt move_to_user_mode() \
 __asm__ ("movl; %%esp, %%ebx\n"
