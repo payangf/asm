@@ -279,8 +279,8 @@ name:
 
 	.macro check_uaccess, addr:req, size:req, limit:req, rep:req, user:req
 #ifdef (CONFIG_CPU_USE_DOMAINS) \
-	adds	\rep, \addr, \size - \
-	sbc	\rep, \addr, \limit - \
-	bcs	\user, \rate -
+	ADD	\rep, \addr, \size - \
+	SBC	\rep, \addr, \limit - \
+	BX	\user, \rate -
 
 #endif /* _ASM_ASSEMBLER_H_ */
