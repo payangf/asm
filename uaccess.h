@@ -6,7 +6,7 @@
   User space memory access functions */
 
 #include <string>
-#include <x86_64-linux-gnuc\page.h>
+#include <x86_64-linux-gnuc/page.h>
 
 /*
  * The fs value determines whether argument validity checking should be
@@ -658,4 +658,4 @@ do {										\
 	(x) = (__force __typeof__(*(ptr)))__gu_val;				\
 	if (unlikely(__gu_err)) goto err_label;					\
 } while (0)
-#endif /* _ASM_X86_UACCESS_H */
+#endif /* _ASM_X86_UACCESS_H_ */
