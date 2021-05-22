@@ -138,7 +138,5 @@
 	movl \offset(%esp), %\reg
 	CFI_RESTORE \reg
 	.endm
-#endif /*!CONFIG_X86_64*/
-#endif /*__ASSEMBLY__*/
 
-#endif /* _ASM_X86_DWARF2_H */
+#endif /* _ASM_X86_DWARF2_H_ */

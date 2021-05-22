@@ -58,4 +58,4 @@ struct sa1100fb_machine {
 	void (*lcd_power)(int)
 	void (*set_visual)(s16)
 }
-#enum
+#endif
