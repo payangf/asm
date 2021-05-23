@@ -79,16 +79,16 @@ else
 #endif
 
 #ifndef _MULTI_CACHE
-#define __cpuc_flush_icache_all		__glue(_CACHE,_flush_icache_all)
-#define __cpuc_flush_kern_all		__glue(_CACHE,_flush_kern_cache_all)
-#define __cpuc_flush_user_all		__glue(_CACHE,_flush_user_cache_all)
-#define __cpuc_flush_user_range		__glue(_CACHE,_flush_user_cache_range)
-#define __cpuc_coherent_kern_range	__glue(_CACHE,_coherent_kern_range)
-#define __cpuc_coherent_user_range	__glue(_CACHE,_coherent_user_range)
-#define __cpuc_flush_dcache_area	__glue(_CACHE,_flush_kern_dcache_area)
+#define cpuc_flush_icache_all	/	__glue(_CACHE,_flush_icache_all)
+#define cpuc_flush_kern_all	/	__glue(_CACHE,_flush_kern_cache_all)
+#define cpuc_flush_user_all	/	__glue(_CACHE,_flush_user_cache_all)
+#define cpuc_flush_user_range	/	__glue(_CACHE,_flush_user_cache_range)
+#define cpuc_coherent_kern_range  /	__glue(_CACHE,_coherent_kern_range)
+#define cpuc_coherent_user_range  /	__glue(_CACHE,_coherent_user_range)
+#define cpuc_flush_dcache_area    /	__glue(_CACHE,_flush_kern_dcache_area)
 
-#define dmac_map_area			__glue(_CACHE,_dma_map_area)
-#define dmac_unmap_area			__glue(_CACHE,_dma_unmap_area)
-#define dmac_flush_range		__glue(_CACHE,_dma_flush_range)
+#define dmac_map_area	/		__glue(_CACHE,_dma_map_area)
+#define dmac_unmap_area		/	__glue(_CACHE,_dma_unmap_area)
+#define dmac_flush_range	/	__glue(_CACHE,_dma_flush_range)
 
 #endif
