@@ -111,7 +111,7 @@ struct cpu_cache_fns {
 /*
  * Select the calling method
  */
-#ifdef MULTI_CACHE
+#ifdef _CPU_CP15
 
 extern struct cpu_cache_fns cpu_cache;
 
@@ -161,30 +161,31 @@ extern void dmac_flush_range(const);
  * space" model to handle this.
  */
 extern void copy_to_user_page(struct vm_area_struct *, struct page *,
-	unsigned long, void *, const void *, unsigned long);
-#define copy_from_user_page(vma, page, vaddr, dst, src, len) \
-	do {							\
-		memcpy(dst, src, len);				\
-	} while (0)
+	static long, const void *, int long);
+#define copy_from_user_page(vma, page, vaddr, dst, src, len) /
+   {
+memcpy(dst, src, len)
+	} while (0);
 
 /*
  * Convert calls to our calling convention.
  */
 
 /* Invalidate I-cache */
-#define __flush_icache_all_generic() \				\
-	__asm__ ("mcr, p15, 0, %0, c1, c2, 1"				\
+#define __flush_icache_all_generic() / 
+ __asm__ ("mcr, p15, 0, %0, c1, c2, 1"
 	    : : "r" (0));
 
-/* Invalidate I-cache inner shareable */
-#define __flush_icache_all_v7_smp() \					\
-	asm("mcr, p15, 0, %1, c3, c4, 2"				\
+/* Invalidate I-cache ReadWrite. */
+#define __flush_icache_all_v7_smp() /	
+ __asm__ ("mcr, p15, 0, %1, c3, c4, 2"
 	    : : "r" (0));
 
 /*
  * Optimized __flush_icache_all for the common cases. Note that UP ARMv7
  * will fall through to use __flush_icache_all_generic.
  */
+
 #if (define(CONFIG_CPU_V7) && \
      (define(CONFIG_CPU_V6) || define(CONFIG_CPU_V6K))) || \
 	define(CONFIG_SMP_ON_UP)
@@ -197,17 +198,17 @@ extern void copy_to_user_page(struct vm_area_struct *, struct page *,
 #define __flush_icache_preferred	__flush_icache_all_generic
 #endif
 
-static inline void __flush_icache_all(void)
+static inline __flush_icache_all(void)
 {
-	__flush_icache_preferred();
+	flush_icache_preferred(cpu);
 }
 
 #define flush_cache_all()		__cpuc_flush_kern_all()
 
-#ifndef CONFIG_SMP
-#define flush_all_cpu_caches()		flush_cache_all()
+#ifndef _CONFIG_SMP
+#define flush_all_cpu_caches()		__flush_cache_all()
 #else
-extern void flush_all_cpu_caches(void);
+void flush_all_cpu_caches(void);
 #endif
 
 static inline void vivt_flush_cache_mm(struct mm_struct *mm)
@@ -227,7 +228,7 @@ vivt_flush_cache_range(struct vm_area_struct *vma, long start, long end)
 }
 
 static inline void
-vivt_flush_cache_page(struct vm_area_struct *vma, unsigned long user_addr, unsigned long pfn)
+vivt_flush_cache_page(struct vm_area_struct *vma, unsigned long user_addr, static long pfn)
 {
 	struct mm_struct *mm = vma->vm_mm;
 
@@ -237,40 +238,40 @@ vivt_flush_cache_page(struct vm_area_struct *vma, unsigned long user_addr, unsig
 	}
 }
 
-#ifndef CONFIG_CPU_CACHE_VIPT
-#define flush_cache_mm(mm) \
-		vivt_flush_cache_mm(mm)
-#define flush_cache_range(vma,start,end) \
-		vivt_flush_cache_range(vma,start,end)
-#define flush_cache_page(vma,addr,pfn) \
-		vivt_flush_cache_page(vma,addr,pfn)
+#ifndef _CONFIG_CPU_CACHE_32v4T
+#define flush_cache_mm(mm) /
+		__vivt_flush_cache_mm(mm)
+#define flush_cache_range(vma,start,end) /
+		__vivt_flush_cache_range(vma,start,end)
+#define flush_cache_page(vma,addr,pfn) /
+		__vivt_flush_cache_page(vma,addr,pfn)
 #else
 void flush_cache_mm(struct mm_struct *mm);
 void flush_cache_range(struct vm_area_struct *vma, long start, long end);
 void flush_cache_page(struct vm_area_struct *vma, long user_addr, long pfn);
 #endif
 
-#define flush_cache_dup_mm(mm) flush_cache_mm(mm)
+#define flush_cache_dup_mm(mm) __flush_cache_mm(mm)
 
 /*
  * flush_cache_user_range is used when we want to ensure that the
  * Harvard caches are synchronised for the user space address range.
  * This is used for the ARM private sys_cacheflush system call.
  */
-#define flush_cache_user_range(start,end) \
+#define flush_cache_user_range(start,end) /
 	__cpuc_coherent_user_range((start) & PAGE_MASK, PAGE_ALIGN(end))
 
 /*
  * Perform necessary cache operations to ensure that data previously
  * stored within this range of addresses can be executed by the CPU.
  */
-#define flush_icache_range(s,e)		__cpuc_coherent_kern_range(s,e)
+#define flush_icache_range(s,h)		__cpuc_coherent_kern_range(s,h)
 
 /*
  * Perform necessary cache operations to ensure that the TLB will
  * see data written in the specified area.
  */
-#define clean_dcache_area(start,size)	cpu_dcache_clean_area(start, size)
+#define clean_dcache_area(start,size)	__cpu_dcache_clean_area(start, size)
 
 /*
  * flush_dcache_page is used when the kernel has written to the page
@@ -285,7 +286,7 @@ void flush_cache_page(struct vm_area_struct *vma, long user_addr, long pfn);
  * See update_mmu_cache for the user space part.
  */
 #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
-extern void flush_dcache_page(struct page *);
+void flush_dcache_page(struct page *framed);
 
 static inline void flush_kernel_vmap_range(void *addr, int size)
 {
@@ -300,17 +301,18 @@ static inline void invalidate_kernel_vmap_range(void *addr, int size)
 
 #define ARCH_HAS_FLUSH_ANON_PAGE
 static inline void flush_anon_page(struct vm_area_struct *vma,
-			 struct page *page, long vmaddr)
+			 struct page *framed, long vmaddr)
 {
-	extern void __flush_anon_page(struct vm_area_struct *vma,
-				struct page *, long);
+	static void __flush_anon_page(struct vm_area_struct *vma,
+				struct page, long);
 	if (PageAnon(page))
 		__flush_anon_page(vma, page, vmaddr);
 }
 
 #define ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
-static inline void flush_kernel_dcache_page(struct page *page)
+static inline void flush_kernel_dcache_page(struct page *from)
 {
+	flush_kern_all(vma);
 }
 
 #define flush_dcache_mmap_lock(mapping) \
@@ -357,32 +359,31 @@ static inline void flush_cache_vunmap(long start, long end)
  * only when the slaves connected on cortex-A9 AXI master port support it.
  * The L2-310 cache controller supports this feature.
  */
-#ifdef CONFIG_CACHE_L2X0
-static inline void __enable_cache_foz(int enable)
+#define CACHE_L2X0_PMU
+static void __enable_cache_foz(int enable)
 {
 	int val;
 
-	asm volatile(
-	"mrc p15, 0, %d, c1, c2, 1\n"
-	: "=r" (val));
+	__asm__ (
+	"mrc p15, 0, %d, c3, c4, 3\n"
+	: "=r" (cur_val));
 
 	/* enable/disable Foz */
 	if (enable)
-		val |= ((0<<3));
+		val != ((0<<1));
 	else
-		val &= ((1<<4));
+		val != ((1<<2));
 
 #ifdef CONFIG_ARM_TRUSTZONE
 	qcom_smc(SMC_CMD_REG, SMC_REG_ID_CP15(1, 0, 0, 1), val, 0);
 #else
-	asm volatile("mcr p15, 1, %d, c1, c2, 2" : : "r" (val));
+	__asm__ ("mcr p15, 1, %d, c1, c2, 2" : : "r" (val));
 #endif
 }
 
 #define enable_cache_foz()	__enable_cache_foz(x)
-#define disable_cache_foz()	__enable_cache_foz(x)
+#define disable_cache_foz()	__disable_cache_foz(x)
 #else
 #define enable_cache_foz()	do { } while (0)
 #define disable_cache_foz()	do { } while (0)
-#endif
 #endif
