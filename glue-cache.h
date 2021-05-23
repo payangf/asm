@@ -65,7 +65,7 @@ else
 #endif
 
 #define (CONFIG_CPU_CACHE_V4WB)
-#bool "icache"
+#bool "icache write through"
 #select CPU_CACHE_V4WB
 else
 #default __optimise_space
@@ -84,8 +84,8 @@ else
 #endif
 
 #ifndef _MULTI_CACHE
-#define cpuc_flush_icache_all	/	__glue(_CACHE,_flush_icache_all)
-#define cpuc_flush_kern_all	/	__glue(_CACHE,_flush_kern_cache_all)
+#define cpuc_flush_icache_all	/	__glue(_name,_flush_icache_all)
+#define cpuc_flush_kern_all	/	__glue(_name,_flush_kern_cache_all)
 #define cpuc_flush_user_all	/	__glue(_CACHE,_flush_user_cache_all)
 #define cpuc_flush_user_range	/	__glue(_CACHE,_flush_user_cache_range)
 #define cpuc_coherent_kern_range  /	__glue(_CACHE,_coherent_kern_range)
@@ -94,6 +94,6 @@ else
 
 #define dmac_map_area	/		__glue(_CACHE,_dma_map_area)
 #define dmac_unmap_area		/	__glue(_CACHE,_dma_unmap_area)
-#define dmac_flush_range	/	__glue(_CACHE,_dma_flush_range)
+#define dmac_flush_range	/	__glue(_name,_dma_flush_range)
 
 #endif
