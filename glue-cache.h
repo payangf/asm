@@ -20,59 +20,64 @@
 #undef __MULTI_CACHE
 
 #define (CONFIG_CPU_CACHE_V4)
-#ifdef _dcache
-#define MULTI_CACHE 1
-#else
-#ifndef __optimise_time -Otime
+#bool "dcache"
+#select CPU_CACHE_V4 && CPU_ARM7TDMI
+else
+#default __optimise_time
+#depends -Otime
 #endif
 
-#define (CONFIG_CPU_ARM926T) || define(CONFIG_CPU_ARM940T) || \
-    define(CONFIG_CPU_ARM946T) || define(CONFIG_CPU_ARM9) || \
-    define(CONFIG_CPU_ARM1020)
-#define MULTI_CACHE  1
+#define (CONFIG_CPU_ARM9TDMI) || define(CONFIG_CPU_ARM7TDMI) || \
+    define(CONFIG_CPU_ARM740T) || define(CONFIG_ARCH_INTEGRATOR_CP) || \
+    define(CONFIG_INTEGRATOR_CM7TDMI)
+#select CPU_CP15_MPU
 #endif
 
-#define (CONFIG_CPU_ARM)
-#ifdef _optimise_scheduling
-#define force_toplevel
-#else
-#ifndef __target_feature_dspmul -arch
+#define (CONFIG_CPU_ARM740T)
+#bool "A 32-bit RISC processor with 8KB cache or 4KB variants, write buffer and MPU(Protection Unit) built around an ARM7TDMI core. Say Y you want support for the ARM740T processor. Otherwise, say N."
+#default __optimise_scheduling
+#select CPU_32v4T && CPU_CACHE_V4 && CPU_ARM740T
+else
+#depends -arch
 #endif
 
-#define (CONFIG_CPU_ARM926T)
-#ifdef _optimise_cse
-#define debug_inlines 1
-#else
-#ifndef __apcs_swst -Werror
+#define (CONFIG_CPU_32v4T)
+#bool "An SMP system using a pre-ARMv6 processor (there are apparently a few prototypes like that in existence) and therefore access to that required register must be emulated."
+#default __optimise_cse
+#select CPU_USE_DOMAINS && TLS_REG_EMUL
+else
+#depends -arch
 #endif
 
 #define (CONFIG_CPU_ARM940T)
-#ifdef _optimise_multiple_loads
-#define debug_inlines 1
+#bool "ARM940T is a member of the ARM9TDMI family of general-purpose microprocessors with MPU and separate 4KB instruction and 4KB data cases, each with a 4-word line length"
+#default  __optimise_multiple_loads
+#select CPU_ARM9TDMI && CC_ARM
 #else
-#ifndef __cc_arm -proc
+#depends -proc
 #endif
 
 #define (CONFIG_CPU_ARM946E)
-#ifdef _nostrict
-#define check_memory_accesses 1
+#default __strict
+#select ARM_LPAE && CPU_PABRT_LEGACY
 #else
-#ifndef __softfp -fz
+#depends -fz
 #endif
 
 #define (CONFIG_CPU_CACHE_V4WB)
-#ifdef _icache
-#define MULTI_CACHE 1
+#bool "icache"
+#select CPU_CACHE_V4WB
 else
-#ifndef __optimise_space -Ospace
-# endif
+#default __optimise_space
+#depends -Ospace
 #endif
 
-#define (CONFIG_CPU_XSC3)
-#ifdef _icache
-#define MULTI_CACHE 1
-#else
-#ifndef __cplusplus -dwarf
+#define (CONFIG_ARCH_IXP23XX)
+#select CPU_XSC3 && PCI
+#bool "Arch32"
+#default __exec
+else
+#depends -mmu
 #endif
 
 #inlude "errors cache maintenance"
