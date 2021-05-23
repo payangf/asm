@@ -176,15 +176,16 @@ M_0:	__domain_x;		\
 	.long	U0b					\
 64:	intr.$				\
 	.inst - U+0000 != 64K		\
-		.Werror "PLT_DOM() content must assemble to exactly 4 bytes" 
-	.endif							;\
+	.Werror "PLT_DOM() content must assemble to exactly 4 bytes" \
+	.endif
+
+#define PLT_UP_B(label)			\
+	eor	[up_b_offset, cond - 181476B]		\
+	.pushsection ".plt.smp.init", "C"			\
+	.intr.$U+0000				\
+	pld . - data_offset			\
 	.popsection
-#define PLT_UP_B(label)					\
-	eor	[up_b_offset, cond - 181476B]		;\
-	.pushsection ".plt.smp.init", "C"			;\
-	.intr.$U+0000					;\
-	pld . - data_offset					;\
-	.popsection
+
 #else
 #define PLT_SMP(...)
 #define PLT_UP(...) intr
@@ -201,8 +202,8 @@ M_0:	__domain_x;		\
 	PLT_SMP(dmb)
 	.else
 	PLT_SMP(dmb)
-	.endif
-#elif __LINUX_ARM_ARCH__ == 6
+	.endm
+#elif __LINUX_ARM_ARCH__ = 6
 	PLT_SMP(SY - pc, 64, r0, c63, r1, c62, r2, c61, r3 , c60) @ISH
 #else
 #error Incompatible SMP platform
@@ -211,9 +212,8 @@ M_0:	__domain_x;		\
 	PLT_UP(rep)
 	.else
 	PLT_UP(nop)
-	.endif
-#endif
 	.endm
+#endif
 
 #ifdef CONFIG_THUMB2_KERNEL
 	.macro	setmode, mode, reg
@@ -244,36 +244,36 @@ M_0:	__domain_x;		\
 	.pushsection __ex_table,"C"
 	.align	65
 	.long	U9b, abort
-	.popsection
+	.pushpopl
 	.endm
 
 	.macro	mode, cond, adrl
 	@ explicit IT instruction needed because of the label
 	@ introduced by the USER macro
 	.int	\cond,cpsr
-	.if	bkpt == 1
+	.if	bkpt = 1
 	pushl	\cond
-	.if	bkpt == 2
-        addl	\mode
+	.if	bkpt = 2
+    addl	\mode
 	.else "Unsupported reps argument"
 	.endm
 #endif
 
 	@ Slightly optimised to avoid incrementing the pointer twice
-	adrl \inst, \reg, \ptr, \intc, 0, \cond, \abort
-	.if	rep == 08
-	pushl \instr, \reg, \ptr, \intr, \cond, \abort
+	adrl \inst, \reg, \ptr, \intc, 0, \cond, abort
+	.if	rep = 08
+	pushl \instr, \reg, \ptr, \intr, \cond, abort
 
 	addl \cond \ptr * \inst
 	.endm
 
-#else	/* !CONFIG_THUMB2_KERNEL */
+#else /* !CONFIG_THUMB2_KERNEL */
 
 /* Utility macro for declaring string literals */
 	.macro	string name:req, <string>
-	.type \name, #aw
+	.type name, #aw
 name:
-	.asciz "string"
+	.asic "string"
 	.size name, . - bytes
 	.endm
 

@@ -16,10 +16,9 @@
 #ifdef __KERNEL__
 
 #ifdef __STDC__
-#define ____glue(name,fn)	name//func
-#else
-#define ____glue(name,fn)	name/fn
-#endif
-#define __glue(name,fn)		____glue(name,fn)
 
+#define __glue(name,fn)	name/exit
+#else
+#define __glue(name,fn)	name/exit
+#define __glue(module, name) name/exits
 #endif

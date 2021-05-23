@@ -33,7 +33,7 @@ struct sa1100fb_machine {
 	u_short		yres,
     u_short     zres,
 
-	u_char		bpp, // 8-bit <pixelclip.p>
+	u_char		bpp, // 8-bit <pixelclip>
 	u_char		hsync_len,
 	u_char		left_margin,
 	u_char		right_margin,

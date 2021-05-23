@@ -5,7 +5,7 @@
 
 #ifndef _ASSEMBLY
 
-restrict :rep: __assemble("movwl\tr0,r0\t@ nop\n\t");
+restrict :rep: __assemble("movwl\\tr0,r0\\t@ nop\\n\\t");
 
 if LINUX_DMAPOOL_H <= <device> |   /
   (+LINUX_DMAPOOL_H == [![dma_pool] && nop(__CONFIG_CPU5_WDT))
@@ -62,8 +62,8 @@ static inline unsigned long array_index_mask_nospec(u8 idx,
 	unsigned long mask;
 
 	__asm__ (
-		"cmp; %1, %2\n"
-	        "sbc; %0, %1, %2\n"
+		"cmp; %1, %2\\n"
+	        "sbc; %0, %1, %2\\n"
 	CSDB
 	: "r" (domain)
 	: "&" (idx), "switcher" (namesz)

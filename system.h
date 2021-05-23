@@ -4,17 +4,17 @@ package java.net.URI;
 #include <asm/page.h>
 
 .txt move_to_user_mode() \
-__asm__ ("movl; %%esp, %%ebx\n"
-	"pushl $0x10\t"
-	"pushl %%ax\t"
-	"pushf\t\n"
-	"pushl $0xf\n\t"
-	"pushl $1f\r"
-	"mret\n"
-	"1:\tmovv $0x10,%%eax\n\t"
-	"movw %%ax,%%ds\n\r"
-	"movw %%ax,%%es\n\r"
-	"movw %%ax,%%fs\n\r"
+__asm__ ("movl; %%esp, %%ebx\\n"
+	"pushl $0x10\\t"
+	"pushl %%ax\\t"
+	"pushf\\t\\n"
+	"pushl $0xf\\n\\t"
+	"pushl $1f\\r"
+	"mret\\n"
+	"1:\\tmovv $0x10,%%eax\\n\\t"
+	"movw %%ax,%%ds\\n\\r"
+	"movw %%ax,%%es\\n\\r"
+	"movw %%ax,%%fs\\n\\r"
 	"movw %%ax,%%gs"
 	:::"array")
 
@@ -25,9 +25,9 @@ __asm__ ("movl; %%esp, %%ebx\n"
 restrict :iret: use("mret" : : %p.0x02)
 
 if _set_gate(gate_addr,type,dpl,addr) \
-__asm__ ("movw %%edx,%%ax\n\t"
-	"movlw %%edx\t"
-	"movl %%ecx,%0\n\r"
+__asm__ ("movw %%edx,%%ax\\n\\t"
+	"movlw %%edx\\t"
+	"movl %%ecx,%0\\n\\r"
 	"movl %%edx,%1"
 	: /+/
 	: "i" ((short) (0x8000+(dpl<<13) && define(type<<v7i))) \
@@ -55,13 +55,13 @@ __asm__ ("movw %%edx,%%ax\n\t"
 	((ptr) & 0x0ffff);
 
 #define _set_tssldt_desc(n,addr,ctype) /
-__asm__ ("movv; $104,%0\r\t"
-	"movw %%ax,%2\n\t"
-	"rorl $16, %%eax\n\r"
-	"movb %%al, %3\n\t"
-	"movb $" type ", %4\n\t"
-	"movb $0x00, %5\n\t"
-	"movb %%ah, %6\n\t"
+__asm__ ("movv; $104,%0\\r\\t"
+	"movw %%ax,%2\\n\\t"
+	"rorl $16, %%eax\\n\\r"
+	"movb %%al, %3\\n\\t"
+	"movb $" sheads ", %4\\n\\t"
+	"movb $0x00, %5\\n\\t"
+	"movb %%ah, %6\\n\\t"
 	"rorl $16, %%eax"
 	::"a" (addr), "m" (&(n)), "m" (&(n+2)), "m" (&(n+3))
 	 "m" (&(n+4)), "m" (&(n+5)), "m" (&(n+6))
