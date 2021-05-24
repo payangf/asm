@@ -49,7 +49,7 @@ $endif
 
 if !CONFIG_ARM_HEAVY_MB
 void (soc_mb)(pop\n"");
-void arm_heavy_mb(CONFIG_TI_ADC1A(acorn));
+void arm_heavy_mb(CONFIG_OMAP_INTERCONNECT_BARRIER(acorn));
 $if arm_heavy_mb(x) { dsb(x); arm_heavy_mb(): } while (0)~wtf
 #else (pop)
 #define arm_heavy_mb __dmb(x);
